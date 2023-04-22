@@ -1,0 +1,158 @@
+<script type="text/javascript" src="{{asset 'prism.js'}}"></script>
+<div class="container -mb-6" id="page-container">
+  <div class="row row-lg">
+    <div class="col pb-6">
+      <nav class="font-size-md mt-6">
+        <ol class="breadcrumbs">
+          <li title="Adform">
+            <a href="/hc/en-us">Homepage</a>
+          </li>
+          <li title="Release Notes">Site Tracking Blueprint</li>
+        </ol>
+      </nav>
+
+      <header class="sm:flex justify-content-between">
+        <h1 class="w-full md:mt-2">Site Tracking Blueprint</h1>
+      </header>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <p>LOL</p>
+        </div>
+        <div class="panel-body collapse">BODY</div>
+      </div>
+      <div id="types-container">
+        <div class="website-type" id="casino">Casino</div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .website-type {
+    height: 6rem;
+    width: 6rem;
+    border: 1px solid black;
+  }
+  .website-type:hover {
+    cursor: pointer;
+  }
+  .checkbox:hover {
+    cursor: pointer;
+  }
+  .page-option:hover {
+    border: 1px solid black;
+    background-color: aquamarine;
+  }
+</style>
+<script>
+  const HTMLSCRIPTS = "";
+  function insertAfter(newNode, existingNode) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+  const pagesContainer = document.createElement("div");
+
+  pagesContainer.hidden = true;
+
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.hidden = true;
+  /* When selecting a website type,an array of all possible pages for that type is passed as argument
+         and this function creates a list of checkboxes with each page for the user to select (e.g. Homepage, Deposit etc.): */
+  function createPagesCheckboxList(allPossiblePages) {
+    let IDarray = [];
+    //Create the container for all checkboxes
+
+    allPossiblePages.forEach((page) => {
+      //Create a checkbox for each page from the pages array (each website type has it's own possible pages array)
+      const pageCheckbox = document.createElement("input");
+      pageCheckbox.type = "checkbox";
+      pageCheckboxID = page.split(" ").join("").toLowerCase(); // adds element ID without whitespaces (e.g. "First Time deposit turns to first-time-deposit")
+      IDarray.push(pageCheckboxID);
+      pageCheckbox.id = pageCheckboxID;
+      pageCheckbox.className = "checkbox";
+      window[pageCheckboxID] = pageCheckbox.checked ? pageCheckboxID : "";
+
+      //Create a label for every checkbox
+      const pageLabel = document.createElement("label");
+      pageLabel.htmlFor = pageCheckbox.id;
+      pageLabel.innerText = page;
+      pageLabel.className = "checkbox";
+
+      //
+      const pageContainer = document.createElement("div");
+      pageContainer.className = "page-option";
+      pageContainer.appendChild(pageCheckbox);
+      pageContainer.appendChild(pageLabel);
+
+      pagesContainer.appendChild(pageContainer);
+      pagesContainer.appendChild(document.createElement("br"));
+    });
+    const generateCodesButton = document.createElement("button");
+    generateCodesButton.innerText = "Generate Tracking scripts";
+
+    const trackingSetupIdField = document.createElement("input");
+    trackingSetupIdField.type = "number";
+    trackingSetupIdField.placeholder = "Enter your tracking setup ID";
+
+    pagesContainer.appendChild(trackingSetupIdField);
+    pagesContainer.appendChild(document.createElement("br"));
+    pagesContainer.appendChild(document.createElement("br"));
+
+    pagesContainer.appendChild(generateCodesButton);
+
+    function GenerateScripts(pageNamesArray, trackingSetupID) {
+      if (pageNamesArray.length === 0 || trackingSetupID.length === 0) {
+        errorMessageElement.innerText = "Please fill out the required fields";
+        if (errorMessageElement.hidden) {
+          errorMessageElement.hidden = false;
+          insertAfter(errorMessageElement, pagesContainer);
+        }
+      } else {
+        pageNamesArray.forEach((pageName) => {
+          const pre = document.createElement("pre");
+          pre.className = "programlisting js";
+          pre.setAttribute("data-language", "js");
+          const code = document.createElement("code");
+
+          code.innerHTML = `&#60;&#33;&#45;&#45;&#32;&#65;&#100;&#102;&#111;&#114;&#109;&#32;&#84;&#114;&#97;&#99;&#107;&#105;&#110;&#103;&#32;&#67;&#111;&#100;&#101;&#32;&#66;&#69;&#71;&#73;&#78;&#32;&#45;&#45;&#62;&#10;&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#32;&#116;&#121;&#112;&#101;&#61;&#34;&#116;&#101;&#120;&#116;&#47;&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#34;&#62;&#10;&#32;&#32;&#32;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#61;&#32;&#65;&#114;&#114;&#97;&#121;&#46;&#105;&#115;&#65;&#114;&#114;&#97;&#121;&#40;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#41;&#32;&#63;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#58;&#32;&#40;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#63;&#32;&#91;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#93;&#32;&#58;&#32;&#91;&#93;&#41;&#59;&#10;&#32;&#32;&#32;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#46;&#112;&#117;&#115;&#104;&#40;&#123;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#72;&#116;&#116;&#112;&#72;&#111;&#115;&#116;&#58;&#32;&#39;&#116;&#114;&#97;&#99;&#107;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#39;&#44;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#112;&#109;&#58; ${trackingSetupID},
+&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#100;&#105;&#118;&#105;&#100;&#101;&#114;&#58;&#32;&#101;&#110;&#99;&#111;&#100;&#101;&#85;&#82;&#73;&#67;&#111;&#109;&#112;&#111;&#110;&#101;&#110;&#116;&#40;&#39;&#124;&#39;&#41;&#44;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#112;&#97;&#103;&#101;&#110;&#97;&#109;&#101;&#58;&#32;&#101;&#110;&#99;&#111;&#100;&#101;&#85;&#82;&#73;&#67;&#111;&#109;&#112;&#111;&#110;&#101;&#110;&#116;&#40;'${pageName}')
+      &#32;&#32;&#32;&#32;&#125;&#41;&#59;&#10;&#32;&#32;&#32;&#32;&#40;&#102;&#117;&#110;&#99;&#116;&#105;&#111;&#110;&#32;&#40;&#41;&#32;&#123;&#32;&#118;&#97;&#114;&#32;&#115;&#32;&#61;&#32;&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;&#46;&#99;&#114;&#101;&#97;&#116;&#101;&#69;&#108;&#101;&#109;&#101;&#110;&#116;&#40;&#39;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#41;&#59;&#32;&#115;&#46;&#116;&#121;&#112;&#101;&#32;&#61;&#32;&#39;&#116;&#101;&#120;&#116;&#47;&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#59;&#32;&#115;&#46;&#97;&#115;&#121;&#110;&#99;&#32;&#61;&#32;&#116;&#114;&#117;&#101;&#59;&#32;&#115;&#46;&#115;&#114;&#99;&#32;&#61;&#32;&#39;&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#115;&#50;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#47;&#98;&#97;&#110;&#110;&#101;&#114;&#115;&#47;&#115;&#99;&#114;&#105;&#112;&#116;&#115;&#47;&#115;&#116;&#47;&#116;&#114;&#97;&#99;&#107;&#112;&#111;&#105;&#110;&#116;&#45;&#97;&#115;&#121;&#110;&#99;&#46;&#106;&#115;&#39;&#59;&#32;&#118;&#97;&#114;&#32;&#120;&#32;&#61;&#32;&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;&#46;&#103;&#101;&#116;&#69;&#108;&#101;&#109;&#101;&#110;&#116;&#115;&#66;&#121;&#84;&#97;&#103;&#78;&#97;&#109;&#101;&#40;&#39;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#41;&#91;&#48;&#93;&#59;&#32;&#120;&#46;&#112;&#97;&#114;&#101;&#110;&#116;&#78;&#111;&#100;&#101;&#46;&#105;&#110;&#115;&#101;&#114;&#116;&#66;&#101;&#102;&#111;&#114;&#101;&#40;&#115;&#44;&#32;&#120;&#41;&#59;&#32;&#125;&#41;&#40;&#41;&#59;&#10;&#10;&#60;&#47;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#60;&#110;&#111;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#32;&#32;&#32;&#32;&#60;&#112;&#32;&#115;&#116;&#121;&#108;&#101;&#61;&#34;&#109;&#97;&#114;&#103;&#105;&#110;&#58;&#48;&#59;&#112;&#97;&#100;&#100;&#105;&#110;&#103;&#58;&#48;&#59;&#98;&#111;&#114;&#100;&#101;&#114;&#58;&#48;&#59;&#34;&#62;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#60;&#105;&#109;&#103;&#32;&#115;&#114;&#99;&#61;&#34;&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#116;&#114;&#97;&#99;&#107;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#47;&#83;&#101;&#114;&#118;&#105;&#110;&#103;&#47;&#84;&#114;&#97;&#99;&#107;&#80;&#111;&#105;&#110;&#116;&#47;&#63;&#112;&#109;&#61;${trackingSetupID}&#38;&#65;&#68;&#70;&#80;&#97;&#103;&#101;&#78;&#97;&#109;&#101;&#61;${encodeURIComponent(
+            pageName
+          )}&#38;&#65;&#68;&#70;&#100;&#105;&#118;&#105;&#100;&#101;&#114;&#61;&#124;&#34;&#32;&#119;&#105;&#100;&#116;&#104;&#61;&#34;&#49;&#34;&#32;&#104;&#101;&#105;&#103;&#104;&#116;&#61;&#34;&#49;&#34;&#32;&#97;&#108;&#116;&#61;&#34;&#34;&#32;&#47;&#62;&#10;&#32;&#32;&#32;&#32;&#60;&#47;&#112;&#62;&#10;&#60;&#47;&#110;&#111;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#60;&#33;&#45;&#45;&#32;&#65;&#100;&#102;&#111;&#114;&#109;&#32;&#84;&#114;&#97;&#99;&#107;&#105;&#110;&#103;&#32;&#67;&#111;&#100;&#101;&#32;&#69;&#78;&#68;&#32;&#45;&#45;&#62;`;
+          pre.appendChild(code);
+
+          insertAfter(pre, pagesContainer);
+        });
+      }
+    }
+
+    generateCodesButton.addEventListener("click", () => {
+      let selectedPageNames = [];
+      IDarray.forEach((ID) => {
+        const pageName = document.getElementById(ID);
+        if (pageName.checked)
+          selectedPageNames.push(pageName.labels[0].innerText);
+      });
+      GenerateScripts(selectedPageNames, trackingSetupIdField.value);
+    });
+
+    return pagesContainer;
+  }
+
+  const casinoType = document.getElementById("casino");
+  const casinoOptions = [
+    "Homepage",
+    "Registration",
+    "First Time Deposit",
+    "Deposit",
+    "Game page",
+  ];
+
+  casinoType.addEventListener("click", () => {
+    pagesContainer.hidden = !pagesContainer.hidden;
+    if (window.casinoPages === undefined) {
+      window.casinoPages = "added";
+      const typesContainer = document.getElementById("types-container");
+      const optionsContainer = createPagesCheckboxList(casinoOptions);
+      insertAfter(optionsContainer, typesContainer);
+    }
+  });
+</script>
