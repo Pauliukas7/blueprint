@@ -23,21 +23,82 @@
     <div class="parent">
       <pre id="code-snippet"></pre>
       <div class="variables">
-        Use variables?
-        <ul class="vars-list">
-          <li><input type="checkbox" value="sales" />Sales (number)</li>
-          <li><input type="checkbox" value="orderid" />Order Id (text)</li>
-          <div>Product variables:</div>
-          <li><input type="checkbox" value="productid" />Product ID</li>
-          <li><input type="checkbox" value="productname" />Product Name</li>
-          <li>
-            <input type="checkbox" value="productcategory" />Product Category
-          </li>
-          <li><input type="checkbox" value="categoryid" />Category Id</li>
-          <li><input type="checkbox" value="weight" />Weight</li>
-          <li><input type="checkbox" value="step" />Step</li>
-          <li><input type="checkbox" value="productname" />Product Name</li>
-        </ul>
+        Use Variables
+        <br />
+        <br />
+        <input type="checkbox" value="sales" id="sales" data-level="order" />
+        <label for="sales">Sales (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="orderid"
+          id="orderid"
+          data-level="order"
+        />
+        <label for="sales">Order ID</label>
+        <br />
+        <br />
+        <div class="product-variables">Product variables:</div>
+        <br />
+        <br />
+        <input
+          type="checkbox"
+          value="categoryname"
+          id="categoryname"
+          data-level="product"
+        />
+        <label for="categoryname">Category Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="categoryid"
+          id="categoryid"
+          data-level="product"
+        />
+        <label for="categoryid">Category ID (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productname"
+          id="productname"
+          data-level="product"
+        />
+        <label for="productname">Product Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productid"
+          id="productid"
+          data-level="product"
+        />
+        <label for="salproductides">Product ID(text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="weight"
+          id="weight"
+          data-level="product"
+        />
+        <label for="weight">Weight (number)</label>
+        <br />
+        <input type="checkbox" value="step" id="step" data-level="product" />
+        <label for="step">Step (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productcount"
+          id="productcount"
+          data-level="product"
+        />
+        <label for="productcount">Product Count (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productsales"
+          id="productsales"
+          data-level="product"
+        />
+        <label for="productsales">Product Sales (number)</label>
       </div>
     </div>
   </body>
@@ -64,5 +125,29 @@
     )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;`;
+
+    const variablesContainerElements =
+      document.querySelector(".variables").childNodes;
+    window.productLevelVars = [];
+    window.orderLevelVars = [];
+    variablesContainerElements.forEach((element) => {
+      element.onchange = () => {
+        if (element.checked) {
+          if (element.dataset.level === "order") {
+            window.orderLevelVars.push(element.value);
+          } else {
+            window.productLevelVars.push(element.value);
+          }
+        } else {
+          if (element.dataset.level === "order") {
+            const elementIndex = window.orderLevelVars.indexOf(element.value);
+            window.orderLevelVars.splice(elementIndex, 1);
+          } else {
+            const elementIndex = window.productLevelVars.indexOf(element.value);
+            window.productLevelVars.splice(elementIndex, 1);
+          }
+        }
+      };
+    });
   </script>
 </html>
