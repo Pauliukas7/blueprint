@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .variables {
+    }
+    .parent {
+      display: flex;
+      /* border: 1px solid black; */
+    }
+    #code-snippet {
+      width: 70%;
+      overflow-y: hidden; /* Hide vertical scrollbar */
+      overflow-x: scroll;
+    }
+  </style>
+  <body>
+    <div class="parent">
+      <pre id="code-snippet"></pre>
+      <div class="variables">
+        Use variables?
+        <ul class="vars-list">
+          <li><input type="checkbox" value="sales" />Sales (number)</li>
+          <li><input type="checkbox" value="orderid" />Order Id (text)</li>
+          <div>Product variables:</div>
+          <li><input type="checkbox" value="productid" />Product ID</li>
+          <li><input type="checkbox" value="productname" />Product Name</li>
+          <li>
+            <input type="checkbox" value="productcategory" />Product Category
+          </li>
+          <li><input type="checkbox" value="categoryid" />Category Id</li>
+          <li><input type="checkbox" value="weight" />Weight</li>
+          <li><input type="checkbox" value="step" />Step</li>
+          <li><input type="checkbox" value="productname" />Product Name</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  <script>
+    var trackingSetupID = 1721306;
+    var pageName = "js code snippet";
+    document.getElementById(
+      "code-snippet"
+    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}')
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+      pageName
+    )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;`;
+  </script>
+</html>
