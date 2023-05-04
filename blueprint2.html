@@ -17,11 +17,15 @@
       .scripts-and-vars {
         border: 1px solid black;
         display: flex;
-        overflow: scroll;
+        height: 20rem;
       }
       .variables {
-        width: 3rem;
         border: 1px solid black;
+        overflow: scroll;
+      }
+      .code-snippet {
+        width: 70%;
+        overflow: scroll;
       }
 
       .website-type {
@@ -57,6 +61,8 @@
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
+      window.productLevelVars = {};
+      window.orderLevelVars = {};
       const HTMLSCRIPTS = "";
       function insertAfter(newNode, existingNode) {
         existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
@@ -234,11 +240,98 @@
               const scriptsDiv = document.createElement("div");
               scriptsDiv.className = "scripts-and-vars";
               const varsDiv = document.createElement("div");
-              varsDiv.className = "variables";
+              varsDiv.className = "variables-" + pageName.replaceAll(" ", "");
+              varsDiv.innerHTML = `
+        Use Variables
+        <br />
+        <br />
+        <input type="checkbox" value="sales" id="sales" data-level="order" />
+        <label for="sales">Sales (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="orderid"
+          id="orderid"
+          data-level="order"
+        />
+        <label for="sales">Order ID</label>
+        <br />
+        <br />
+        <div class="product-variables">Product variables:</div>
+        <br />
+        <input
+          type="checkbox"
+          value="categoryname"
+          id="categoryname"
+          data-level="product"
+        />
+        <label for="categoryname">Category Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="categoryid"
+          id="categoryid"
+          data-level="product"
+        />
+        <label for="categoryid">Category ID (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productname"
+          id="productname"
+          data-level="product"
+        />
+        <label for="productname">Product Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productid"
+          id="productid"
+          data-level="product"
+        />
+        <label for="salproductides">Product ID(text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="weight"
+          id="weight"
+          data-level="product"
+        />
+        <label for="weight">Weight (number)</label>
+        <br />
+        <input type="checkbox" value="step" id="step" data-level="product" />
+        <label for="step">Step (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productcount"
+          id="productcount"
+          data-level="product"
+        />
+        <label for="productcount">Product Count (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productsales"
+          id="productsales"
+          data-level="product"
+        />
+        <label for="productsales">Product Sales (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productcount"
+          id="productcount"
+          data-level="product"
+        />
+        <label for="productcount">Product Count (number)</label>
+        `;
               const pre = document.createElement("pre");
               pre.className = "programlisting js";
+              pre.classList.add("code-snippet");
               pre.setAttribute("data-language", "js");
               const code = document.createElement("code");
+              code.className = pageName.replaceAll(" ", "");
               code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
@@ -258,6 +351,215 @@
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+              let variablesContainerElements;
+
+              setTimeout(() => {
+                variablesContainerElements = document.querySelector(
+                  `.variables-${pageName.replaceAll(" ", "")}`
+                ).childNodes;
+                window.orderLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
+                window.productLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
+
+                const orderVars =
+                  window.orderLevelVars[`${pageName.replaceAll(" ", "")}`];
+                const productVars =
+                  window.productLevelVars[`${pageName.replaceAll(" ", "")}`];
+
+                variablesContainerElements.forEach((element) => {
+                  element.onchange = () => {
+                    if (element.checked) {
+                      if (element.dataset.level === "order") {
+                        orderVars.push(element.value);
+                      } else {
+                        productVars.push(element.value);
+                      }
+                    } else {
+                      if (element.dataset.level === "order") {
+                        const elementIndex = orderVars.indexOf(element.value);
+                        orderVars.splice(elementIndex, 1);
+                      } else {
+                        const elementIndex = productVars.indexOf(element.value);
+                        productVars.splice(elementIndex, 1);
+                      }
+                    }
+
+                    if (orderVars.length > 0 || productVars.length > 0) {
+                      if (orderVars.length > 0 && productVars.length === 0) {
+                        let variablesString = "";
+                        for (var key of orderVars) {
+                          const index = orderVars.indexOf(key);
+                          if (index < orderVars.length - 1) {
+                            variablesString =
+                              variablesString +
+                              `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                              "\n" +
+                              "          ";
+                          } else {
+                            variablesString =
+                              variablesString +
+                              `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                          }
+                        }
+                        document.querySelector(
+                          `.${pageName.replaceAll(" ", "")}`
+                        ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          ${variablesString}
+        }
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+                          pageName
+                        )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                      }
+                    }
+                    if (orderVars.length === 0 && productVars.length > 0) {
+                      let variablesString = "";
+                      for (var key of productVars) {
+                        const index = productVars.indexOf(key);
+                        if (index < productVars.length - 1) {
+                          variablesString =
+                            variablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                            "\n" +
+                            "              ";
+                        } else {
+                          variablesString =
+                            variablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                        }
+                      }
+                      document.querySelector(
+                        `.${pageName.replaceAll(" ", "")}`
+                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          itms: [
+            {
+              ${variablesString}
+            }
+          ]     
+        }
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+                        pageName
+                      )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                    }
+                    if (orderVars.length > 0 && productVars.length > 0) {
+                      let orderVariablesString = "";
+                      for (var key of orderVars) {
+                        const index = orderVars.indexOf(key);
+                        if (index < orderVars.length - 1) {
+                          orderVariablesString =
+                            orderVariablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                            "\n" +
+                            "          ";
+                        } else {
+                          orderVariablesString =
+                            orderVariablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
+                        }
+                      }
+
+                      let productVariablesString = "";
+                      for (var key of productVars) {
+                        const index = productVars.indexOf(key);
+                        if (index < productVars.length - 1) {
+                          productVariablesString =
+                            productVariablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                            "\n" +
+                            "              ";
+                        } else {
+                          productVariablesString =
+                            productVariablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
+                        }
+                      }
+                      document.querySelector(
+                        `.${pageName.replaceAll(" ", "")}`
+                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          ${orderVariablesString}
+          itms: [
+            {
+              ${productVariablesString}
+            }
+          ]     
+        }
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+                        pageName
+                      )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                    }
+                    if (orderVars.length === 0 && productVars.length === 0) {
+                      document.querySelector(
+                        `.${pageName.replaceAll(" ", "")}`
+                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}')
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+                        pageName
+                      )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                    }
+                  };
+                });
+              }, 0);
+
               pre.appendChild(code);
               scriptsDiv.appendChild(pre);
               scriptsDiv.appendChild(varsDiv);

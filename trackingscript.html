@@ -156,10 +156,20 @@
             window.orderLevelVars.length > 0 &&
             window.productLevelVars.length === 0
           ) {
-            let orderStringStart = "order: {" + "\n";
             let variablesString = "";
             for (var key of window.orderLevelVars) {
-              orderString;
+              const index = window.orderLevelVars.indexOf(key);
+              if (index < window.orderLevelVars.length - 1) {
+                variablesString =
+                  variablesString +
+                  `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                  "\n" +
+                  "          ";
+              } else {
+                variablesString =
+                  variablesString +
+                  `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+              }
             }
             document.getElementById(
               "code-snippet"
@@ -170,7 +180,10 @@
         HttpHost: 'track.adform.net',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
-        pagename: encodeURIComponent('${pageName}')
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          ${variablesString}
+        }
         });
     (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
 &#x3C;/script&#x3E;
@@ -182,6 +195,113 @@
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;`;
           }
+        }
+        if (
+          window.orderLevelVars.length === 0 &&
+          window.productLevelVars.length > 0
+        ) {
+          let variablesString = "";
+          for (var key of window.productLevelVars) {
+            const index = window.productLevelVars.indexOf(key);
+            if (index < window.productLevelVars.length - 1) {
+              variablesString =
+                variablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                "\n" +
+                "          ";
+            } else {
+              variablesString =
+                variablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+            }
+          }
+          document.getElementById(
+            "code-snippet"
+          ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          itms: [{
+          ${variablesString}
+        }] 
+        }
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+            pageName
+          )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;`;
+        }
+        if (
+          window.orderLevelVars.length > 0 &&
+          window.productLevelVars.length > 0
+        ) {
+          let orderVariablesString = "";
+          for (var key of window.orderLevelVars) {
+            const index = window.orderLevelVars.indexOf(key);
+            if (index < window.orderLevelVars.length - 1) {
+              orderVariablesString =
+                orderVariablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                "\n" +
+                "          ";
+            } else {
+              orderVariablesString =
+                orderVariablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
+            }
+          }
+
+          let productVariablesString = "";
+          for (var key of window.productLevelVars) {
+            const index = window.productLevelVars.indexOf(key);
+            if (index < window.productLevelVars.length - 1) {
+              productVariablesString =
+                productVariablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                "\n" +
+                "            ";
+            } else {
+              productVariablesString =
+                productVariablesString +
+                `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
+            }
+          }
+          document.getElementById(
+            "code-snippet"
+          ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}'),
+        order: {
+          ${orderVariablesString}
+            itms: [{
+            ${productVariablesString}
+          }]       
+        }
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+            pageName
+          )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;`;
         }
       };
     });
