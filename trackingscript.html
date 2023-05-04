@@ -147,6 +147,42 @@
             window.productLevelVars.splice(elementIndex, 1);
           }
         }
+
+        if (
+          window.orderLevelVars.length > 0 ||
+          window.productLevelVars.length > 0
+        ) {
+          if (
+            window.orderLevelVars.length > 0 &&
+            window.productLevelVars.length === 0
+          ) {
+            let orderStringStart = "order: {" + "\n";
+            let variablesString = "";
+            for (var key of window.orderLevelVars) {
+              orderString;
+            }
+            document.getElementById(
+              "code-snippet"
+            ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}')
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+              pageName
+            )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;`;
+          }
+        }
       };
     });
   </script>
