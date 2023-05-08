@@ -221,13 +221,51 @@
           else generateCodesButton.disabled = true;
         };
 
+        const trackingDomainDropdown = document.createElement("select");
+        trackingDomainDropdown.id = "trackingdomains";
+
+        const domainAmericas = document.createElement("option");
+        domainAmericas.value = "a2.adform.net";
+        domainAmericas.innerText = "Americas (a2.adform.net)";
+
+        const domainAPAC = document.createElement("option");
+        domainAPAC.value = "asia.adform.net";
+        domainAPAC.innerText = "APAC (asia.adform.net)";
+
+        const domainCHINA = document.createElement("option");
+        domainCHINA.value = "adfnet.cn";
+        domainCHINA.innerText = "China (adfnet.cn)";
+
+        const domainEMEA = document.createElement("option");
+        domainEMEA.value = "track.adform.net";
+        domainEMEA.innerText = "EMEA (track.adform.net)";
+
+        const domainGLOBAL = document.createElement("option");
+        domainGLOBAL.value = "a1.adform.net";
+        domainGLOBAL.innerText = "GLOBAL (a1.adform.net)";
+
+        trackingDomainDropdown.appendChild(domainEMEA);
+        trackingDomainDropdown.appendChild(domainAmericas);
+        trackingDomainDropdown.appendChild(domainAPAC);
+        trackingDomainDropdown.appendChild(domainCHINA);
+        trackingDomainDropdown.appendChild(domainGLOBAL);
+        window.trackingDomain = trackingDomainDropdown.value;
+
+        trackingDomainDropdown.onchange = () =>
+          (window.trackingDomain = trackingDomainDropdown.value);
+
         pageNamesContainer.appendChild(trackingSetupIdField);
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(document.createElement("br"));
-
+        pageNamesContainer.appendChild(trackingDomainDropdown);
+        pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(generateCodesButton);
 
-        function GenerateScripts(pageNamesArray, trackingSetupID) {
+        function GenerateScripts(
+          pageNamesArray,
+          trackingSetupID,
+          trackingDomain
+        ) {
           if (pageNamesArray.length === 0 || trackingSetupID.length === 0) {
             errorMessageElement.innerText =
               "Please fill out the required fields";
@@ -336,7 +374,7 @@
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
-        HttpHost: 'track.adform.net',
+        HttpHost: '${trackingDomain}',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
         pagename: encodeURIComponent('${pageName}')
@@ -580,7 +618,11 @@
             if (pageName.checked && pageName.value.length > 0)
               selectedPageNames.push(pageName.value);
           });
-          GenerateScripts(selectedPageNames, trackingSetupIdField.value);
+          GenerateScripts(
+            selectedPageNames,
+            trackingSetupIdField.value,
+            window.trackingDomain
+          );
         });
       }
 
