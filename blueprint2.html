@@ -363,6 +363,34 @@
           data-level="product"
         />
         <label for="productcount">Product Count (number)</label>
+        <br />
+       
+        <input
+          type="checkbox"
+          value="sv1"
+          id="sv1"
+          data-level="order"
+        />
+        <label for="sv1">sv1 (text)</label>
+        
+        <select id="data-level-sv1">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+          <input
+          type="checkbox"
+          value="sv2"
+          id="sv2"
+          data-level="order"
+        />
+        <label for="sv2">sv2 (text)</label>
+        
+        <select id="data-level-sv2">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+        
         `;
               const pre = document.createElement("pre");
               pre.className = "programlisting js";
@@ -383,7 +411,7 @@
 &#x3C;/script&#x3E;
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
                 pageName
               )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
@@ -395,6 +423,11 @@
                 variablesContainerElements = document.querySelector(
                   `.variables-${pageName.replaceAll(" ", "")}`
                 ).childNodes;
+
+                levelVarsSelectElements = document
+                  .querySelector(`.variables-${pageName.replaceAll(" ", "")}`)
+                  .querySelectorAll("select");
+
                 window.orderLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
                 window.productLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
 
@@ -402,6 +435,24 @@
                   window.orderLevelVars[`${pageName.replaceAll(" ", "")}`];
                 const productVars =
                   window.productLevelVars[`${pageName.replaceAll(" ", "")}`];
+
+                levelVarsSelectElements.forEach((selection) => {
+                  const variableElementId =
+                    selection.id.split("data-level-")[1];
+                  const variableCheckbox =
+                    document.getElementById(variableElementId);
+                  selection.addEventListener("change", () => {
+                    const dataSetAfterChange = selection.value.toLowerCase();
+
+                    variableCheckbox.dataset.level = dataSetAfterChange;
+
+                    if (variableCheckbox.checked) {
+                      if (variableCheckbox.dataset.level === "product") {
+                      } else {
+                      }
+                    }
+                  });
+                });
 
                 variablesContainerElements.forEach((element) => {
                   element.onchange = () => {

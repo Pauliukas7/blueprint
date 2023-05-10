@@ -7,16 +7,19 @@
     <title>Document</title>
   </head>
   <body>
-    <pre><code id="code">
-
-    </code></pre>
+    <p id="par"></p>
+    <button id="but">Button</button>
   </body>
+
   <script>
-    document.getElementById(
-      "code"
-    ).innerHTML = `<button id='press'>Press</button>`;
-    document.getElementById("press").addEventListener("click", () => {
-      console.log("working");
+    let x = 5;
+
+    const par = document.getElementById("par");
+    par.innerText = x;
+
+    const button = document.getElementById("but");
+    button.addEventListener("click", () => {
+      par.innerText = 6;
     });
   </script>
 </html>
