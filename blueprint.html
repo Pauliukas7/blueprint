@@ -6,17 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-      .codes-container {
-        border: 1px solid black;
-        height: 10rem;
-        width: 10rem;
-      }
       .types-container {
         display: flex;
         border: 1px solid black;
       }
-      .pagenames-container {
+      .pagename-options-container {
+        border: 1px solid black;
+        display: flex;
       }
+      .scripts-and-vars {
+        border: 1px solid black;
+        display: flex;
+        height: 20rem;
+      }
+      .variables {
+        border: 1px solid black;
+        overflow: scroll;
+      }
+      .code-snippet {
+        width: 70%;
+        overflow: scroll;
+      }
+
       .website-type {
         height: 6rem;
         width: 6rem;
@@ -36,45 +47,214 @@
     </style>
   </head>
   <body>
-    <div class="types-container">
+    <div id="types" class="types-container">
       <div class="website-type" id="casino">Casino</div>
       <div class="website-type" id="mobile">Mobile</div>
       <div class="website-type" id="ecommerce">Ecommerce</div>
       <div class="website-type" id="Newsletter">Newsletter</div>
     </div>
 
-    <div id="pagenames" class="pagenames-container" hidden></div>
+    <div class="pagename-options-container" id="options-container">
+      <div class="pagenames" id="pagenames" hidden></div>
+    </div>
+    <div id="error-message" hidden></div>
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
+      window.productLevelVars = {};
+      window.orderLevelVars = {};
       const HTMLSCRIPTS = "";
       function insertAfter(newNode, existingNode) {
         existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
       }
-      const pagesContainer = document.getElementById("pagenames");
+      const websiteTypesContainer = document.getElementById("types");
+      const optionsContainer = document.getElementById("options-container");
+      const pageNamesContainer = document.getElementById("pagenames");
 
-      const errorMessageElement = document.createElement("div");
-      errorMessageElement.hidden = true;
-      /* When selecting a website type,an array of all possible pages for that type is passed as argument
-               and this function creates a list of checkboxes with each page for the user to select (e.g. Homepage, Deposit etc.): */
-      function createPagesCheckboxList(allPossiblePages) {
+      const errorMessageElement = document.getElementById("error-message");
+      const scriptsContainer = document.getElementById("scripts");
+
+      function renderDOM(trackingDomain, trackingSetupID, pageName) {
+        const scriptsDiv = document.createElement("div");
+        scriptsDiv.className = "scripts-and-vars";
+        const varsDiv = document.createElement("div");
+        varsDiv.className = "variables-" + pageName.replaceAll(" ", "");
+        varsDiv.innerHTML = `
+        Use Variables
+        <br />
+        <br />
+        <input type="checkbox" value="sales" id="sales" data-level="order" />
+        <label for="sales">Sales (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="orderid"
+          id="orderid"
+          data-level="order"
+        />
+        <label for="sales">Order ID</label>
+        <br />
+        <br />
+        <div class="product-variables">Product variables:</div>
+        <br />
+        <input
+          type="checkbox"
+          value="categoryname"
+          id="categoryname"
+          data-level="product"
+        />
+        <label for="categoryname">Category Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="categoryid"
+          id="categoryid"
+          data-level="product"
+        />
+        <label for="categoryid">Category ID (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productname"
+          id="productname"
+          data-level="product"
+        />
+        <label for="productname">Product Name (text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productid"
+          id="productid"
+          data-level="product"
+        />
+        <label for="salproductides">Product ID(text)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="weight"
+          id="weight"
+          data-level="product"
+        />
+        <label for="weight">Weight (number)</label>
+        <br />
+        <input type="checkbox" value="step" id="step" data-level="product" />
+        <label for="step">Step (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productcount"
+          id="productcount"
+          data-level="product"
+        />
+        <label for="productcount">Product Count (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productsales"
+          id="productsales"
+          data-level="product"
+        />
+        <label for="productsales">Product Sales (number)</label>
+        <br />
+        <input
+          type="checkbox"
+          value="productcount"
+          id="productcount"
+          data-level="product"
+        />
+        <label for="productcount">Product Count (number)</label>
+        <br />
+       
+        <input
+          type="checkbox"
+          value="sv1"
+          id="sv1"
+          data-level="order"
+        />
+        <label for="sv1">sv1 (text)</label>
+        
+        <select id="data-level-sv1">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+          <input
+          type="checkbox"
+          value="sv2"
+          id="sv2"
+          data-level="order"
+        />
+        <label for="sv2">sv2 (text)</label>
+        
+        <select id="data-level-sv2">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+        
+        `;
+        const pre = document.createElement("pre");
+        pre.className = "programlisting js";
+        pre.classList.add("code-snippet");
+        pre.setAttribute("data-language", "js");
+        const code = document.createElement("code");
+        const pageNameTrimmed = pageName.replaceAll(" ", "");
+        code.className = pageNameTrimmed;
+
+        const variablesString = "";
+
+        code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: '${trackingDomain}',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}')
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+          pageName
+        )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+        let variablesContainerElements;
+        let levelVarsSelectElements;
+        let scriptNodeList = [];
+
+        scriptsContainer.innerHTML = "";
+        scriptNodeList.forEach((node) => scriptsContainer.appendChild(node));
+        scriptsContainer.hidden = false;
+        pre.appendChild(code);
+        scriptsDiv.appendChild(pre);
+        scriptsDiv.appendChild(varsDiv);
+        scriptNodeList.push(scriptsDiv);
+      }
+
+      function createPagesCheckboxList(pageNamesArray) {
         let IDarray = [];
-        //Create the container for all checkboxes
-
-        allPossiblePages.forEach((page) => {
-          //Create a checkbox for each page from the pages array (each website type has it's own possible pages array)
+        window.numOfPagesChecked = 0;
+        window.trackingIdNotEmpty = false;
+        pageNamesArray.forEach((pageName) => {
           const pageCheckbox = document.createElement("input");
           pageCheckbox.type = "checkbox";
-          pageCheckboxID = page.split(" ").join("").toLowerCase(); // adds element ID without whitespaces (e.g. "First Time deposit turns to first-time-deposit")
-          IDarray.push(pageCheckboxID);
-          pageCheckbox.id = pageCheckboxID;
+          pageCheckbox.id = pageName.split(" ").join("").toLowerCase(); //e.g. "First time deposit" html element id will be "firsttimedeposit"
+          IDarray.push(pageCheckbox.id);
           pageCheckbox.className = "checkbox";
-          window[pageCheckboxID] = pageCheckbox.checked ? pageCheckboxID : "";
-
+          pageCheckbox.value = pageName;
+          pageCheckbox.onchange = () => {
+            pageCheckbox.checked ? numOfPagesChecked++ : numOfPagesChecked--;
+            if (trackingIdNotEmpty && numOfPagesChecked > 0)
+              generateCodesButton.disabled = false;
+            else generateCodesButton.disabled = true;
+          };
           //Create a label for every checkbox
           const pageLabel = document.createElement("label");
           pageLabel.htmlFor = pageCheckbox.id;
-          pageLabel.innerText = page;
+          pageLabel.innerText = pageName;
           pageLabel.className = "checkbox";
 
           //
@@ -83,46 +263,177 @@
           pageContainer.appendChild(pageCheckbox);
           pageContainer.appendChild(pageLabel);
 
-          pagesContainer.appendChild(pageContainer);
-          pagesContainer.appendChild(document.createElement("br"));
+          pageNamesContainer.appendChild(pageContainer);
+          pageNamesContainer.appendChild(document.createElement("br"));
         });
+        let custom_id_number = 0;
+
+        custom_id_number++;
+        const customCheckbox = document.createElement("input");
+        customCheckbox.type = "checkbox";
+        customCheckbox.id = "custom" + custom_id_number;
+        IDarray.push(customCheckbox.id);
+        customCheckbox.className = "checkbox";
+        customCheckbox.value = "";
+        customCheckbox.onchange = () => {
+          if (customCheckbox.checked && customCheckbox.value.length > 0)
+            numOfPagesChecked++;
+          else if (!customCheckbox.checked && customCheckbox.value.length > 0)
+            numOfPagesChecked--;
+
+          if (trackingIdNotEmpty && numOfPagesChecked > 0)
+            generateCodesButton.disabled = false;
+          else generateCodesButton.disabled = true;
+        };
+
+        const customPageNameInputField = document.createElement("input");
+        customPageNameInputField.placeholder = "Insert your page name here";
+        const pageContainerCustom = document.createElement("div");
+        pageContainerCustom.className = "page-option";
+        pageContainerCustom.id = "page-option-custom" + custom_id_number;
+        pageContainerCustom.appendChild(customCheckbox);
+        pageContainerCustom.appendChild(customPageNameInputField);
+        pageNamesContainer.appendChild(pageContainerCustom);
+        pageNamesContainer.appendChild(document.createElement("br"));
+        customPageNameInputField.onchange = () => {
+          const currentValue = customPageNameInputField.value;
+          customCheckbox.value = currentValue;
+          if (customCheckbox.checked && customCheckbox.value.length > 0)
+            numOfPagesChecked++;
+          else if (customCheckbox.checked && customCheckbox.value.length === 0)
+            numOfPagesChecked--;
+
+          if (trackingIdNotEmpty && numOfPagesChecked > 0)
+            generateCodesButton.disabled = false;
+          else generateCodesButton.disabled = true;
+        };
+
+        const addCustomPageNameButton = document.createElement("button");
+        addCustomPageNameButton.innerText = "Add another page name";
+        addCustomPageNameButton.id = "addCustomPage";
+
+        addCustomPageNameButton.addEventListener("click", () => {
+          custom_id_number++;
+          const newCustomPageContainer = pageContainerCustom.cloneNode(true);
+          const clonedCheckbox = newCustomPageContainer.childNodes[0];
+          clonedCheckbox.id = "custom" + custom_id_number;
+          IDarray.push(clonedCheckbox.id);
+          const clonedInputField = newCustomPageContainer.childNodes[1];
+          clonedCheckbox.value = "";
+          clonedCheckbox.checked = false;
+          clonedInputField.value = "";
+          clonedCheckbox.onchange = () => {
+            if (clonedCheckbox.checked && clonedCheckbox.value.length > 0)
+              numOfPagesChecked++;
+            else if (!clonedCheckbox.checked && clonedCheckbox.value.length > 0)
+              numOfPagesChecked--;
+
+            if (trackingIdNotEmpty && numOfPagesChecked > 0)
+              generateCodesButton.disabled = false;
+            else generateCodesButton.disabled = true;
+          };
+
+          clonedInputField.onchange = () => {
+            const currentValue = clonedInputField.value;
+            clonedCheckbox.value = currentValue;
+            if (clonedCheckbox.checked && clonedCheckbox.value.length > 0)
+              numOfPagesChecked++;
+            else if (
+              clonedCheckbox.checked &&
+              clonedCheckbox.value.length === 0
+            )
+              numOfPagesChecked--;
+
+            if (trackingIdNotEmpty && numOfPagesChecked > 0)
+              generateCodesButton.disabled = false;
+            else generateCodesButton.disabled = true;
+          };
+          newCustomPageContainer.id = "page-option-custom" + custom_id_number;
+          const thisButton = Array.from(pageNamesContainer.childNodes).find(
+            (element) => element.id === "addCustomPage"
+          );
+          pageNamesContainer.insertBefore(newCustomPageContainer, thisButton);
+          pageNamesContainer.insertBefore(
+            document.createElement("br"),
+            thisButton
+          );
+        });
+
+        pageNamesContainer.appendChild(addCustomPageNameButton);
+        pageNamesContainer.appendChild(document.createElement("br"));
+        pageNamesContainer.appendChild(document.createElement("br"));
+
         const generateCodesButton = document.createElement("button");
+        generateCodesButton.disabled = true;
         generateCodesButton.innerText = "Generate Tracking scripts";
 
         const trackingSetupIdField = document.createElement("input");
         trackingSetupIdField.type = "number";
         trackingSetupIdField.placeholder = "Enter your tracking setup ID";
+        trackingSetupIdField.onchange = () => {
+          trackingIdFieldNotEmpty = trackingSetupIdField.value.length > 0;
+          trackingIdFieldNotEmpty
+            ? (window.trackingIdNotEmpty = true)
+            : (window.trackingIdNotEmpty = false);
 
-        pagesContainer.appendChild(trackingSetupIdField);
-        pagesContainer.appendChild(document.createElement("br"));
-        pagesContainer.appendChild(document.createElement("br"));
+          if (trackingIdNotEmpty && numOfPagesChecked > 0)
+            generateCodesButton.disabled = false;
+          else generateCodesButton.disabled = true;
+        };
 
-        pagesContainer.appendChild(generateCodesButton);
+        const trackingDomainDropdown = document.createElement("select");
+        trackingDomainDropdown.id = "trackingdomains";
 
-        function GenerateScripts(pageNamesArray, trackingSetupID) {
+        const domainAmericas = document.createElement("option");
+        domainAmericas.value = "a2.adform.net";
+        domainAmericas.innerText = "Americas (a2.adform.net)";
+
+        const domainAPAC = document.createElement("option");
+        domainAPAC.value = "asia.adform.net";
+        domainAPAC.innerText = "APAC (asia.adform.net)";
+
+        const domainCHINA = document.createElement("option");
+        domainCHINA.value = "adfnet.cn";
+        domainCHINA.innerText = "China (adfnet.cn)";
+
+        const domainEMEA = document.createElement("option");
+        domainEMEA.value = "track.adform.net";
+        domainEMEA.innerText = "EMEA (track.adform.net)";
+
+        const domainGLOBAL = document.createElement("option");
+        domainGLOBAL.value = "a1.adform.net";
+        domainGLOBAL.innerText = "GLOBAL (a1.adform.net)";
+
+        trackingDomainDropdown.appendChild(domainEMEA);
+        trackingDomainDropdown.appendChild(domainAmericas);
+        trackingDomainDropdown.appendChild(domainAPAC);
+        trackingDomainDropdown.appendChild(domainCHINA);
+        trackingDomainDropdown.appendChild(domainGLOBAL);
+        window.trackingDomain = trackingDomainDropdown.value;
+
+        trackingDomainDropdown.onchange = () =>
+          (window.trackingDomain = trackingDomainDropdown.value);
+
+        pageNamesContainer.appendChild(trackingSetupIdField);
+        pageNamesContainer.appendChild(document.createElement("br"));
+        pageNamesContainer.appendChild(document.createElement("br"));
+        pageNamesContainer.appendChild(trackingDomainDropdown);
+        pageNamesContainer.appendChild(document.createElement("br"));
+        pageNamesContainer.appendChild(generateCodesButton);
+
+        function GenerateScripts(
+          pageNamesArray,
+          trackingSetupID,
+          trackingDomain
+        ) {
           if (pageNamesArray.length === 0 || trackingSetupID.length === 0) {
             errorMessageElement.innerText =
               "Please fill out the required fields";
-            if (errorMessageElement.hidden) {
-              errorMessageElement.hidden = false;
-              insertAfter(errorMessageElement, pagesContainer);
-            }
+            errorMessageElement.hidden = false;
+            scriptsContainer.hidden = true;
           } else {
-            pageNamesArray.forEach((pageName) => {
-              const pre = document.createElement("pre");
-              pre.className = "programlisting js";
-              pre.setAttribute("data-language", "js");
-              const code = document.createElement("code");
-
-              code.innerHTML = `&#60;&#33;&#45;&#45;&#32;&#65;&#100;&#102;&#111;&#114;&#109;&#32;&#84;&#114;&#97;&#99;&#107;&#105;&#110;&#103;&#32;&#67;&#111;&#100;&#101;&#32;&#66;&#69;&#71;&#73;&#78;&#32;&#45;&#45;&#62;&#10;&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#32;&#116;&#121;&#112;&#101;&#61;&#34;&#116;&#101;&#120;&#116;&#47;&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#34;&#62;&#10;&#32;&#32;&#32;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#61;&#32;&#65;&#114;&#114;&#97;&#121;&#46;&#105;&#115;&#65;&#114;&#114;&#97;&#121;&#40;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#41;&#32;&#63;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#58;&#32;&#40;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#32;&#63;&#32;&#91;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#93;&#32;&#58;&#32;&#91;&#93;&#41;&#59;&#10;&#32;&#32;&#32;&#32;&#119;&#105;&#110;&#100;&#111;&#119;&#46;&#95;&#97;&#100;&#102;&#116;&#114;&#97;&#99;&#107;&#46;&#112;&#117;&#115;&#104;&#40;&#123;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#72;&#116;&#116;&#112;&#72;&#111;&#115;&#116;&#58;&#32;&#39;&#116;&#114;&#97;&#99;&#107;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#39;&#44;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#112;&#109;&#58; ${trackingSetupID},
-      &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#100;&#105;&#118;&#105;&#100;&#101;&#114;&#58;&#32;&#101;&#110;&#99;&#111;&#100;&#101;&#85;&#82;&#73;&#67;&#111;&#109;&#112;&#111;&#110;&#101;&#110;&#116;&#40;&#39;&#124;&#39;&#41;&#44;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#112;&#97;&#103;&#101;&#110;&#97;&#109;&#101;&#58;&#32;&#101;&#110;&#99;&#111;&#100;&#101;&#85;&#82;&#73;&#67;&#111;&#109;&#112;&#111;&#110;&#101;&#110;&#116;&#40;'${pageName}')
-      &#32;&#32;&#32;&#32;&#125;&#41;&#59;&#10;&#32;&#32;&#32;&#32;&#40;&#102;&#117;&#110;&#99;&#116;&#105;&#111;&#110;&#32;&#40;&#41;&#32;&#123;&#32;&#118;&#97;&#114;&#32;&#115;&#32;&#61;&#32;&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;&#46;&#99;&#114;&#101;&#97;&#116;&#101;&#69;&#108;&#101;&#109;&#101;&#110;&#116;&#40;&#39;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#41;&#59;&#32;&#115;&#46;&#116;&#121;&#112;&#101;&#32;&#61;&#32;&#39;&#116;&#101;&#120;&#116;&#47;&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#59;&#32;&#115;&#46;&#97;&#115;&#121;&#110;&#99;&#32;&#61;&#32;&#116;&#114;&#117;&#101;&#59;&#32;&#115;&#46;&#115;&#114;&#99;&#32;&#61;&#32;&#39;&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#115;&#50;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#47;&#98;&#97;&#110;&#110;&#101;&#114;&#115;&#47;&#115;&#99;&#114;&#105;&#112;&#116;&#115;&#47;&#115;&#116;&#47;&#116;&#114;&#97;&#99;&#107;&#112;&#111;&#105;&#110;&#116;&#45;&#97;&#115;&#121;&#110;&#99;&#46;&#106;&#115;&#39;&#59;&#32;&#118;&#97;&#114;&#32;&#120;&#32;&#61;&#32;&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;&#46;&#103;&#101;&#116;&#69;&#108;&#101;&#109;&#101;&#110;&#116;&#115;&#66;&#121;&#84;&#97;&#103;&#78;&#97;&#109;&#101;&#40;&#39;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#41;&#91;&#48;&#93;&#59;&#32;&#120;&#46;&#112;&#97;&#114;&#101;&#110;&#116;&#78;&#111;&#100;&#101;&#46;&#105;&#110;&#115;&#101;&#114;&#116;&#66;&#101;&#102;&#111;&#114;&#101;&#40;&#115;&#44;&#32;&#120;&#41;&#59;&#32;&#125;&#41;&#40;&#41;&#59;&#10;&#10;&#60;&#47;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#60;&#110;&#111;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#32;&#32;&#32;&#32;&#60;&#112;&#32;&#115;&#116;&#121;&#108;&#101;&#61;&#34;&#109;&#97;&#114;&#103;&#105;&#110;&#58;&#48;&#59;&#112;&#97;&#100;&#100;&#105;&#110;&#103;&#58;&#48;&#59;&#98;&#111;&#114;&#100;&#101;&#114;&#58;&#48;&#59;&#34;&#62;&#10;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#60;&#105;&#109;&#103;&#32;&#115;&#114;&#99;&#61;&#34;&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#116;&#114;&#97;&#99;&#107;&#46;&#97;&#100;&#102;&#111;&#114;&#109;&#46;&#110;&#101;&#116;&#47;&#83;&#101;&#114;&#118;&#105;&#110;&#103;&#47;&#84;&#114;&#97;&#99;&#107;&#80;&#111;&#105;&#110;&#116;&#47;&#63;&#112;&#109;&#61;${trackingSetupID}&#38;&#65;&#68;&#70;&#80;&#97;&#103;&#101;&#78;&#97;&#109;&#101;&#61;${encodeURIComponent(
-                pageName
-              )}&#38;&#65;&#68;&#70;&#100;&#105;&#118;&#105;&#100;&#101;&#114;&#61;&#124;&#34;&#32;&#119;&#105;&#100;&#116;&#104;&#61;&#34;&#49;&#34;&#32;&#104;&#101;&#105;&#103;&#104;&#116;&#61;&#34;&#49;&#34;&#32;&#97;&#108;&#116;&#61;&#34;&#34;&#32;&#47;&#62;&#10;&#32;&#32;&#32;&#32;&#60;&#47;&#112;&#62;&#10;&#60;&#47;&#110;&#111;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#10;&#60;&#33;&#45;&#45;&#32;&#65;&#100;&#102;&#111;&#114;&#109;&#32;&#84;&#114;&#97;&#99;&#107;&#105;&#110;&#103;&#32;&#67;&#111;&#100;&#101;&#32;&#69;&#78;&#68;&#32;&#45;&#45;&#62;`;
-              pre.appendChild(code);
-
-              insertAfter(pre, pagesContainer);
-            });
+            errorMessageElement.hidden = true;
+            renderDOM(pageNamesArray, trackingSetupID, trackingDomain);
           }
         }
 
@@ -130,13 +441,15 @@
           let selectedPageNames = [];
           IDarray.forEach((ID) => {
             const pageName = document.getElementById(ID);
-            if (pageName.checked)
-              selectedPageNames.push(pageName.labels[0].innerText);
+            if (pageName.checked && pageName.value.length > 0)
+              selectedPageNames.push(pageName.value);
           });
-          GenerateScripts(selectedPageNames, trackingSetupIdField.value);
+          GenerateScripts(
+            selectedPageNames,
+            trackingSetupIdField.value,
+            window.trackingDomain
+          );
         });
-
-        return pagesContainer;
       }
 
       const casinoType = document.getElementById("casino");
@@ -145,14 +458,18 @@
         "Registration",
         "First Time Deposit",
         "Deposit",
-        "Game page",
+        "Game page"
       ];
 
       casinoType.addEventListener("click", () => {
-        pagesContainer.hidden = !pagesContainer.hidden;
+        pageNamesContainer.hidden = !pageNamesContainer.hidden;
+
+        if (pageNamesContainer.hidden) {
+          scriptsContainer.hidden = true;
+          errorMessageElement.hidden = true;
+        }
         if (window.casinoPages === undefined) {
           window.casinoPages = "added";
-          const pageNamesContainer = document.getElementById("pagenames");
           createPagesCheckboxList(casinoOptions);
         }
       });

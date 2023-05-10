@@ -19,7 +19,7 @@
         display: flex;
         height: 20rem;
       }
-      .variables {
+      .variables- {
         border: 1px solid black;
         overflow: scroll;
       }
@@ -259,6 +259,7 @@
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(trackingDomainDropdown);
         pageNamesContainer.appendChild(document.createElement("br"));
+        pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(generateCodesButton);
 
         function GenerateScripts(
@@ -278,7 +279,7 @@
               const scriptsDiv = document.createElement("div");
               scriptsDiv.className = "scripts-and-vars";
               const varsDiv = document.createElement("div");
-              varsDiv.className = "variables-" + pageName.replaceAll(" ", "");
+              varsDiv.className = "variables- " + pageName.replaceAll(" ", "");
               varsDiv.innerHTML = `
         Use Variables
         <br />
@@ -364,7 +365,8 @@
         />
         <label for="productcount">Product Count (number)</label>
         <br />
-       
+        <br />
+
         <input
           type="checkbox"
           value="sv1"
@@ -372,12 +374,12 @@
           data-level="order"
         />
         <label for="sv1">sv1 (text)</label>
-        
         <select id="data-level-sv1">
           <option>Order</option>
           <option>Product</option>
           </select>
           <br />
+
           <input
           type="checkbox"
           value="sv2"
@@ -385,12 +387,89 @@
           data-level="order"
         />
         <label for="sv2">sv2 (text)</label>
-        
         <select id="data-level-sv2">
           <option>Order</option>
           <option>Product</option>
           </select>
-        
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv3"
+          id="sv3"
+          data-level="order"
+        />
+        <label for="sv3">sv3 (text)</label>
+        <select id="data-level-sv3">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv4"
+          id="sv4"
+          data-level="order"
+        />
+        <label for="sv4">sv4 (text)</label>
+        <select id="data-level-sv4">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv5"
+          id="sv5"
+          data-level="order"
+        />
+        <label for="sv5">sv5 (text)</label>
+        <select id="data-level-sv5">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv6"
+          id="sv6"
+          data-level="order"
+        />
+        <label for="sv6">sv6 (text)</label>
+        <select id="data-level-sv6">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv7"
+          id="sv7"
+          data-level="order"
+        />
+        <label for="sv7">sv7 (text)</label>
+        <select id="data-level-sv7">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
+
+          <input
+          type="checkbox"
+          value="sv8"
+          id="sv8"
+          data-level="order"
+        />
+        <label for="sv8">sv8 (text)</label>
+        <select id="data-level-sv8">
+          <option>Order</option>
+          <option>Product</option>
+          </select>
+          <br />
         `;
               const pre = document.createElement("pre");
               pre.className = "programlisting js";
@@ -420,13 +499,9 @@
               let variablesContainerElements;
 
               setTimeout(() => {
-                variablesContainerElements = document.querySelector(
-                  `.variables-${pageName.replaceAll(" ", "")}`
-                ).childNodes;
+                variablesContainerElements = varsDiv.childNodes;
 
-                levelVarsSelectElements = document
-                  .querySelector(`.variables-${pageName.replaceAll(" ", "")}`)
-                  .querySelectorAll("select");
+                levelVarsSelectElements = varsDiv.querySelectorAll("select");
 
                 window.orderLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
                 window.productLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
@@ -447,51 +522,44 @@
                     variableCheckbox.dataset.level = dataSetAfterChange;
 
                     if (variableCheckbox.checked) {
-                      if (variableCheckbox.dataset.level === "product") {
+                      if (dataSetAfterChange === "product") {
+                        const elementIndex = orderVars.indexOf(
+                          variableCheckbox.value
+                        );
+                        orderVars.splice(elementIndex, 1);
+                        productVars.push(variableCheckbox.value);
                       } else {
+                        const elementIndex = productVars.indexOf(
+                          variableCheckbox.value
+                        );
+                        productVars.splice(elementIndex, 1);
+                        orderVars.push(variableCheckbox.value);
                       }
                     }
+                    renderDOM();
                   });
                 });
-
-                variablesContainerElements.forEach((element) => {
-                  element.onchange = () => {
-                    if (element.checked) {
-                      if (element.dataset.level === "order") {
-                        orderVars.push(element.value);
-                      } else {
-                        productVars.push(element.value);
-                      }
-                    } else {
-                      if (element.dataset.level === "order") {
-                        const elementIndex = orderVars.indexOf(element.value);
-                        orderVars.splice(elementIndex, 1);
-                      } else {
-                        const elementIndex = productVars.indexOf(element.value);
-                        productVars.splice(elementIndex, 1);
-                      }
-                    }
-
-                    if (orderVars.length > 0 || productVars.length > 0) {
-                      if (orderVars.length > 0 && productVars.length === 0) {
-                        let variablesString = "";
-                        for (var key of orderVars) {
-                          const index = orderVars.indexOf(key);
-                          if (index < orderVars.length - 1) {
-                            variablesString =
-                              variablesString +
-                              `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                              "\n" +
-                              "          ";
-                          } else {
-                            variablesString =
-                              variablesString +
-                              `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                          }
+                function renderDOM() {
+                  if (orderVars.length > 0 || productVars.length > 0) {
+                    if (orderVars.length > 0 && productVars.length === 0) {
+                      let variablesString = "";
+                      for (var key of orderVars) {
+                        const index = orderVars.indexOf(key);
+                        if (index < orderVars.length - 1) {
+                          variablesString =
+                            variablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                            "\n" +
+                            "          ";
+                        } else {
+                          variablesString =
+                            variablesString +
+                            `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                         }
-                        document.querySelector(
-                          `.${pageName.replaceAll(" ", "")}`
-                        ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                      }
+                      document.querySelector(
+                        `.${pageName.replaceAll(" ", "")}`
+                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -508,32 +576,33 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                          pageName
-                        )}&ADFdivider=|" width="1" height="1" alt="" />
+                        pageName
+                      )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                    }
+                  }
+
+                  if (orderVars.length === 0 && productVars.length > 0) {
+                    let variablesString = "";
+                    for (var key of productVars) {
+                      const index = productVars.indexOf(key);
+                      if (index < productVars.length - 1) {
+                        variablesString =
+                          variablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                          "\n" +
+                          "              ";
+                      } else {
+                        variablesString =
+                          variablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                       }
                     }
-                    if (orderVars.length === 0 && productVars.length > 0) {
-                      let variablesString = "";
-                      for (var key of productVars) {
-                        const index = productVars.indexOf(key);
-                        if (index < productVars.length - 1) {
-                          variablesString =
-                            variablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                            "\n" +
-                            "              ";
-                        } else {
-                          variablesString =
-                            variablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                        }
-                      }
-                      document.querySelector(
-                        `.${pageName.replaceAll(" ", "")}`
-                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                    document.querySelector(
+                      `.${pageName.replaceAll(" ", "")}`
+                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -554,47 +623,48 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                        pageName
-                      )}&ADFdivider=|" width="1" height="1" alt="" />
+                      pageName
+                    )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                    }
-                    if (orderVars.length > 0 && productVars.length > 0) {
-                      let orderVariablesString = "";
-                      for (var key of orderVars) {
-                        const index = orderVars.indexOf(key);
-                        if (index < orderVars.length - 1) {
-                          orderVariablesString =
-                            orderVariablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                            "\n" +
-                            "          ";
-                        } else {
-                          orderVariablesString =
-                            orderVariablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
-                        }
-                      }
+                  }
 
-                      let productVariablesString = "";
-                      for (var key of productVars) {
-                        const index = productVars.indexOf(key);
-                        if (index < productVars.length - 1) {
-                          productVariablesString =
-                            productVariablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                            "\n" +
-                            "              ";
-                        } else {
-                          productVariablesString =
-                            productVariablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
-                        }
+                  if (orderVars.length > 0 && productVars.length > 0) {
+                    let orderVariablesString = "";
+                    for (var key of orderVars) {
+                      const index = orderVars.indexOf(key);
+                      if (index < orderVars.length - 1) {
+                        orderVariablesString =
+                          orderVariablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                          "\n" +
+                          "          ";
+                      } else {
+                        orderVariablesString =
+                          orderVariablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
                       }
-                      document.querySelector(
-                        `.${pageName.replaceAll(" ", "")}`
-                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                    }
+
+                    let productVariablesString = "";
+                    for (var key of productVars) {
+                      const index = productVars.indexOf(key);
+                      if (index < productVars.length - 1) {
+                        productVariablesString =
+                          productVariablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                          "\n" +
+                          "              ";
+                      } else {
+                        productVariablesString =
+                          productVariablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                      }
+                    }
+                    document.querySelector(
+                      `.${pageName.replaceAll(" ", "")}`
+                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -616,16 +686,16 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                        pageName
-                      )}&ADFdivider=|" width="1" height="1" alt="" />
+                      pageName
+                    )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                    }
-                    if (orderVars.length === 0 && productVars.length === 0) {
-                      document.querySelector(
-                        `.${pageName.replaceAll(" ", "")}`
-                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                  }
+                  if (orderVars.length === 0 && productVars.length === 0) {
+                    document.querySelector(
+                      `.${pageName.replaceAll(" ", "")}`
+                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -639,13 +709,38 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                        pageName
-                      )}&ADFdivider=|" width="1" height="1" alt="" />
+                      pageName
+                    )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                    }
-                  };
+                  }
+                }
+
+                variablesContainerElements.forEach((element) => {
+                  if (element.nodeName === "INPUT") {
+                    element.onchange = () => {
+                      if (element.checked) {
+                        if (element.dataset.level === "order") {
+                          orderVars.push(element.value);
+                        } else {
+                          productVars.push(element.value);
+                        }
+                      } else {
+                        if (element.dataset.level === "order") {
+                          const elementIndex = orderVars.indexOf(element.value);
+                          orderVars.splice(elementIndex, 1);
+                        } else {
+                          const elementIndex = productVars.indexOf(
+                            element.value
+                          );
+                          productVars.splice(elementIndex, 1);
+                        }
+                      }
+
+                      renderDOM();
+                    };
+                  }
                 });
               }, 0);
 
@@ -683,7 +778,7 @@
         "Registration",
         "First Time Deposit",
         "Deposit",
-        "Game page",
+        "Game page"
       ];
 
       casinoType.addEventListener("click", () => {
