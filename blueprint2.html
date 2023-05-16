@@ -647,9 +647,13 @@
                       "\n" +
                       "              ";
                   } else {
-                    variablesString =
-                      variablesString +
-                      `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                    if ((key = "step")) {
+                      variablesString = variablesString + `${key}: 1`;
+                    } else {
+                      variablesString =
+                        variablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                    }
                   }
                 }
                 document.querySelector(
