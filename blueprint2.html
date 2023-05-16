@@ -637,6 +637,7 @@
 
               if (orderVars.length === 0 && productVars.length > 0) {
                 let variablesString = "";
+                productVars.sort();
                 for (var key of productVars) {
                   const index = productVars.indexOf(key);
                   if (index < productVars.length - 1) {
