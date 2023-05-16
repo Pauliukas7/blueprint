@@ -14,6 +14,7 @@
         border: 1px solid black;
         display: flex;
       }
+
       .scripts-and-vars {
         border: 1px solid black;
         display: flex;
@@ -49,18 +50,25 @@
   <body>
     <div id="types" class="types-container">
       <div class="website-type" id="casino">Casino</div>
-      <div class="website-type" id="mobile">Mobile</div>
       <div class="website-type" id="ecommerce">Ecommerce</div>
       <div class="website-type" id="Newsletter">Newsletter</div>
     </div>
 
     <div class="pagename-options-container" id="options-container">
       <div class="pagenames" id="pagenames" hidden></div>
+      <div id="dcoContainer">
+        <input type="checkbox" id="dcoselection" hidden />
+        <label for="dcoselection" id="dcoselectionlabel" hidden
+          >DCO Product Retargeting Template</label
+        >
+      </div>
     </div>
     <div id="error-message" hidden></div>
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
+      window.dcoTemplateSelected = false;
+      window.selectedPageNames = [];
       window.productLevelVars = {};
       window.orderLevelVars = {};
       const HTMLSCRIPTS = "";
@@ -70,11 +78,19 @@
       const websiteTypesContainer = document.getElementById("types");
       const optionsContainer = document.getElementById("options-container");
       const pageNamesContainer = document.getElementById("pagenames");
+      const dcoSelectionElement = document.getElementById("dcoselection");
+      const dcoSelectionElementLabel =
+        document.getElementById("dcoselectionlabel");
+
+      dcoSelectionElement.onchange = () => {
+        window.dcoTemplateSelected = dcoSelectionElement.checked ? true : false;
+      };
 
       const errorMessageElement = document.getElementById("error-message");
       const scriptsContainer = document.getElementById("scripts");
 
       function createPagesCheckboxList(pageNamesArray) {
+        pageNamesContainer.innerHTML = "";
         let IDarray = [];
         window.numOfPagesChecked = 0;
         window.trackingIdNotEmpty = false;
@@ -107,7 +123,13 @@
           pageNamesContainer.appendChild(document.createElement("br"));
         });
         let custom_id_number = 0;
-
+        if (window.currentPage === "ecommerce") {
+          dcoSelectionElement.hidden = false;
+          dcoSelectionElementLabel.hidden = false;
+        } else {
+          dcoSelectionElement.hidden = true;
+          dcoSelectionElementLabel.hidden = true;
+        }
         custom_id_number++;
         const customCheckbox = document.createElement("input");
         customCheckbox.type = "checkbox";
@@ -202,6 +224,7 @@
         pageNamesContainer.appendChild(addCustomPageNameButton);
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(document.createElement("br"));
+        console.log(pageNamesContainer.querySelectorAll(".page-option"));
 
         const generateCodesButton = document.createElement("button");
         generateCodesButton.disabled = true;
@@ -267,20 +290,45 @@
           trackingSetupID,
           trackingDomain
         ) {
-          if (pageNamesArray.length === 0 || trackingSetupID.length === 0) {
-            errorMessageElement.innerText =
-              "Please fill out the required fields";
-            errorMessageElement.hidden = false;
-            scriptsContainer.hidden = true;
-          } else {
-            errorMessageElement.hidden = true;
-            let scriptNodeList = [];
-            pageNamesArray.forEach((pageName) => {
-              const scriptsDiv = document.createElement("div");
-              scriptsDiv.className = "scripts-and-vars";
-              const varsDiv = document.createElement("div");
-              varsDiv.className = "variables- " + pageName.replaceAll(" ", "");
-              varsDiv.innerHTML = `
+          if (window.dcoTemplateSelected)
+            pageNamesArray = [
+              "Product page",
+              "Basket page",
+              "Purchase Completed"
+            ];
+          let scriptNodeList = [];
+          pageNamesArray.forEach((pageName) => {
+            const pre = document.createElement("pre");
+            pre.className = "programlisting js";
+            pre.classList.add("code-snippet");
+            pre.setAttribute("data-language", "js");
+            const code = document.createElement("code");
+            code.className = pageName.replaceAll(" ", "");
+            code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
+    window._adftrack.push({
+        HttpHost: '${trackingDomain}',
+        pm: ${trackingSetupID},
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('${pageName}')
+        });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+&#x3C;/script&#x3E;
+&#x3C;noscript&#x3E;
+    &#x3C;p style="margin:0;padding:0;border:0;">
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+              pageName
+            )}&ADFdivider=|" width="1" height="1" alt="" />
+    &#x3C;/p&#x3E;
+&#x3C;/noscript&#x3E;
+&#x3C;!-- Adform Tracking Code END --&#x3E;`;
+
+            const scriptsDiv = document.createElement("div");
+            scriptsDiv.className = "scripts-and-vars";
+            const varsDiv = document.createElement("div");
+            varsDiv.className = "variables- " + pageName.replaceAll(" ", "");
+            varsDiv.innerHTML = `
         Use Variables
         <br />
         <br />
@@ -471,95 +519,69 @@
           </select>
           <br />
         `;
-              const pre = document.createElement("pre");
-              pre.className = "programlisting js";
-              pre.classList.add("code-snippet");
-              pre.setAttribute("data-language", "js");
-              const code = document.createElement("code");
-              code.className = pageName.replaceAll(" ", "");
-              code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
-&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
-    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
-    window._adftrack.push({
-        HttpHost: '${trackingDomain}',
-        pm: ${trackingSetupID},
-        divider: encodeURIComponent('|'),
-        pagename: encodeURIComponent('${pageName}')
-        });
-    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
-&#x3C;/script&#x3E;
-&#x3C;noscript&#x3E;
-    &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                pageName
-              )}&ADFdivider=|" width="1" height="1" alt="" />
-    &#x3C;/p&#x3E;
-&#x3C;/noscript&#x3E;
-&#x3C;!-- Adform Tracking Code END --&#x3E;`;
-              let variablesContainerElements;
+            let variablesContainerElements;
 
-              setTimeout(() => {
-                variablesContainerElements = varsDiv.childNodes;
+            setTimeout(() => {
+              variablesContainerElements = varsDiv.childNodes;
 
-                levelVarsSelectElements = varsDiv.querySelectorAll("select");
+              levelVarsSelectElements = varsDiv.querySelectorAll("select");
 
-                window.orderLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
-                window.productLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
+              window.orderLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
+              window.productLevelVars[`${pageName.replaceAll(" ", "")}`] = [];
 
-                const orderVars =
-                  window.orderLevelVars[`${pageName.replaceAll(" ", "")}`];
-                const productVars =
-                  window.productLevelVars[`${pageName.replaceAll(" ", "")}`];
+              const orderVars =
+                window.orderLevelVars[`${pageName.replaceAll(" ", "")}`];
+              const productVars =
+                window.productLevelVars[`${pageName.replaceAll(" ", "")}`];
 
-                levelVarsSelectElements.forEach((selection) => {
-                  const variableElementId =
-                    selection.id.split("data-level-")[1];
-                  const variableCheckbox =
-                    document.getElementById(variableElementId);
-                  selection.addEventListener("change", () => {
-                    const dataSetAfterChange = selection.value.toLowerCase();
+              levelVarsSelectElements.forEach((selection) => {
+                const variableElementId = selection.id.split("data-level-")[1];
+                const variableCheckbox =
+                  document.getElementById(variableElementId);
+                selection.addEventListener("change", () => {
+                  const dataSetAfterChange = selection.value.toLowerCase();
 
-                    variableCheckbox.dataset.level = dataSetAfterChange;
+                  variableCheckbox.dataset.level = dataSetAfterChange;
 
-                    if (variableCheckbox.checked) {
-                      if (dataSetAfterChange === "product") {
-                        const elementIndex = orderVars.indexOf(
-                          variableCheckbox.value
-                        );
-                        orderVars.splice(elementIndex, 1);
-                        productVars.push(variableCheckbox.value);
+                  if (variableCheckbox.checked) {
+                    if (dataSetAfterChange === "product") {
+                      const elementIndex = orderVars.indexOf(
+                        variableCheckbox.value
+                      );
+                      orderVars.splice(elementIndex, 1);
+                      productVars.push(variableCheckbox.value);
+                    } else {
+                      const elementIndex = productVars.indexOf(
+                        variableCheckbox.value
+                      );
+                      productVars.splice(elementIndex, 1);
+                      orderVars.push(variableCheckbox.value);
+                    }
+                  }
+                  renderDOM();
+                });
+              });
+              function renderDOM() {
+                if (orderVars.length > 0 || productVars.length > 0) {
+                  if (orderVars.length > 0 && productVars.length === 0) {
+                    let variablesString = "";
+                    for (var key of orderVars) {
+                      const index = orderVars.indexOf(key);
+                      if (index < orderVars.length - 1) {
+                        variablesString =
+                          variablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                          "\n" +
+                          "          ";
                       } else {
-                        const elementIndex = productVars.indexOf(
-                          variableCheckbox.value
-                        );
-                        productVars.splice(elementIndex, 1);
-                        orderVars.push(variableCheckbox.value);
+                        variablesString =
+                          variablesString +
+                          `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                       }
                     }
-                    renderDOM();
-                  });
-                });
-                function renderDOM() {
-                  if (orderVars.length > 0 || productVars.length > 0) {
-                    if (orderVars.length > 0 && productVars.length === 0) {
-                      let variablesString = "";
-                      for (var key of orderVars) {
-                        const index = orderVars.indexOf(key);
-                        if (index < orderVars.length - 1) {
-                          variablesString =
-                            variablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                            "\n" +
-                            "          ";
-                        } else {
-                          variablesString =
-                            variablesString +
-                            `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                        }
-                      }
-                      document.querySelector(
-                        `.${pageName.replaceAll(" ", "")}`
-                      ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                    document.querySelector(
+                      `.${pageName.replaceAll(" ", "")}`
+                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -576,33 +598,33 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                        pageName
-                      )}&ADFdivider=|" width="1" height="1" alt="" />
+                      pageName
+                    )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                  }
+                }
+
+                if (orderVars.length === 0 && productVars.length > 0) {
+                  let variablesString = "";
+                  for (var key of productVars) {
+                    const index = productVars.indexOf(key);
+                    if (index < productVars.length - 1) {
+                      variablesString =
+                        variablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                        "\n" +
+                        "              ";
+                    } else {
+                      variablesString =
+                        variablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                     }
                   }
-
-                  if (orderVars.length === 0 && productVars.length > 0) {
-                    let variablesString = "";
-                    for (var key of productVars) {
-                      const index = productVars.indexOf(key);
-                      if (index < productVars.length - 1) {
-                        variablesString =
-                          variablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                          "\n" +
-                          "              ";
-                      } else {
-                        variablesString =
-                          variablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                      }
-                    }
-                    document.querySelector(
-                      `.${pageName.replaceAll(" ", "")}`
-                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                  document.querySelector(
+                    `.${pageName.replaceAll(" ", "")}`
+                  ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -623,48 +645,48 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                      pageName
-                    )}&ADFdivider=|" width="1" height="1" alt="" />
+                    pageName
+                  )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+                }
+
+                if (orderVars.length > 0 && productVars.length > 0) {
+                  let orderVariablesString = "";
+                  for (var key of orderVars) {
+                    const index = orderVars.indexOf(key);
+                    if (index < orderVars.length - 1) {
+                      orderVariablesString =
+                        orderVariablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                        "\n" +
+                        "          ";
+                    } else {
+                      orderVariablesString =
+                        orderVariablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
+                    }
                   }
 
-                  if (orderVars.length > 0 && productVars.length > 0) {
-                    let orderVariablesString = "";
-                    for (var key of orderVars) {
-                      const index = orderVars.indexOf(key);
-                      if (index < orderVars.length - 1) {
-                        orderVariablesString =
-                          orderVariablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                          "\n" +
-                          "          ";
-                      } else {
-                        orderVariablesString =
-                          orderVariablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;',`;
-                      }
+                  let productVariablesString = "";
+                  for (var key of productVars) {
+                    const index = productVars.indexOf(key);
+                    if (index < productVars.length - 1) {
+                      productVariablesString =
+                        productVariablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                        "\n" +
+                        "              ";
+                    } else {
+                      productVariablesString =
+                        productVariablesString +
+                        `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                     }
-
-                    let productVariablesString = "";
-                    for (var key of productVars) {
-                      const index = productVars.indexOf(key);
-                      if (index < productVars.length - 1) {
-                        productVariablesString =
-                          productVariablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                          "\n" +
-                          "              ";
-                      } else {
-                        productVariablesString =
-                          productVariablesString +
-                          `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                      }
-                    }
-                    document.querySelector(
-                      `.${pageName.replaceAll(" ", "")}`
-                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                  }
+                  document.querySelector(
+                    `.${pageName.replaceAll(" ", "")}`
+                  ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -686,16 +708,16 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                      pageName
-                    )}&ADFdivider=|" width="1" height="1" alt="" />
+                    pageName
+                  )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                  }
-                  if (orderVars.length === 0 && productVars.length === 0) {
-                    document.querySelector(
-                      `.${pageName.replaceAll(" ", "")}`
-                    ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                }
+                if (orderVars.length === 0 && productVars.length === 0) {
+                  document.querySelector(
+                    `.${pageName.replaceAll(" ", "")}`
+                  ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -709,63 +731,58 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                      pageName
-                    )}&ADFdivider=|" width="1" height="1" alt="" />
+                    pageName
+                  )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                  }
                 }
+              }
 
-                variablesContainerElements.forEach((element) => {
-                  if (element.nodeName === "INPUT") {
-                    element.onchange = () => {
-                      if (element.checked) {
-                        if (element.dataset.level === "order") {
-                          orderVars.push(element.value);
-                        } else {
-                          productVars.push(element.value);
-                        }
+              variablesContainerElements.forEach((element) => {
+                if (element.nodeName === "INPUT") {
+                  element.onchange = () => {
+                    if (element.checked) {
+                      if (element.dataset.level === "order") {
+                        orderVars.push(element.value);
                       } else {
-                        if (element.dataset.level === "order") {
-                          const elementIndex = orderVars.indexOf(element.value);
-                          orderVars.splice(elementIndex, 1);
-                        } else {
-                          const elementIndex = productVars.indexOf(
-                            element.value
-                          );
-                          productVars.splice(elementIndex, 1);
-                        }
+                        productVars.push(element.value);
                       }
+                    } else {
+                      if (element.dataset.level === "order") {
+                        const elementIndex = orderVars.indexOf(element.value);
+                        orderVars.splice(elementIndex, 1);
+                      } else {
+                        const elementIndex = productVars.indexOf(element.value);
+                        productVars.splice(elementIndex, 1);
+                      }
+                    }
 
-                      renderDOM();
-                    };
-                  }
-                });
-              }, 0);
+                    renderDOM();
+                  };
+                }
+              });
+            }, 0);
 
-              pre.appendChild(code);
-              scriptsDiv.appendChild(pre);
-              scriptsDiv.appendChild(varsDiv);
-              scriptNodeList.push(scriptsDiv);
-            });
-            scriptsContainer.innerHTML = "";
-            scriptNodeList.forEach((node) =>
-              scriptsContainer.appendChild(node)
-            );
-            scriptsContainer.hidden = false;
-          }
+            pre.appendChild(code);
+            scriptsDiv.appendChild(pre);
+            scriptsDiv.appendChild(varsDiv);
+            scriptNodeList.push(scriptsDiv);
+          });
+          scriptsContainer.innerHTML = "";
+          scriptNodeList.forEach((node) => scriptsContainer.appendChild(node));
+          scriptsContainer.hidden = false;
         }
 
         generateCodesButton.addEventListener("click", () => {
-          let selectedPageNames = [];
+          window.selectedPageNames = [];
           IDarray.forEach((ID) => {
             const pageName = document.getElementById(ID);
             if (pageName.checked && pageName.value.length > 0)
-              selectedPageNames.push(pageName.value);
+              window.selectedPageNames.push(pageName.value);
           });
           GenerateScripts(
-            selectedPageNames,
+            window.selectedPageNames,
             trackingSetupIdField.value,
             window.trackingDomain
           );
@@ -773,6 +790,7 @@
       }
 
       const casinoType = document.getElementById("casino");
+      const ecommerceType = document.getElementById("ecommerce");
       const casinoOptions = [
         "Homepage",
         "Registration",
@@ -780,17 +798,46 @@
         "Deposit",
         "Game page"
       ];
-
+      const ecommerceOptions = [
+        "Homepage",
+        "Product Page",
+        "Basket Page",
+        "Check-out page",
+        "Purchase Completed"
+      ];
       casinoType.addEventListener("click", () => {
-        pageNamesContainer.hidden = !pageNamesContainer.hidden;
-
+        if (window.currentPage !== "casino") {
+          window.currentPage = "casino";
+          createPagesCheckboxList(casinoOptions);
+          pageNamesContainer.hidden = false;
+          scriptsContainer.hidden = true;
+        } else {
+          pageNamesContainer.hidden = !pageNamesContainer.hidden;
+        }
         if (pageNamesContainer.hidden) {
           scriptsContainer.hidden = true;
           errorMessageElement.hidden = true;
         }
-        if (window.casinoPages === undefined) {
-          window.casinoPages = "added";
-          createPagesCheckboxList(casinoOptions);
+      });
+      ecommerceType.addEventListener("click", () => {
+        if (window.currentPage !== "ecommerce") {
+          window.currentPage = "ecommerce";
+          createPagesCheckboxList(ecommerceOptions);
+          pageNamesContainer.hidden = false;
+          dcoSelectionElement.hidden = false;
+          dcoSelectionElementLabel.hidden = false;
+          scriptsContainer.hidden = true;
+        } else {
+          pageNamesContainer.hidden = !pageNamesContainer.hidden;
+          dcoSelectionElement.hidden = !dcoSelectionElement;
+          dcoSelectionElementLabel.hidden = !dcoSelectionElementLabel;
+        }
+
+        if (pageNamesContainer.hidden) {
+          dcoSelectionElement.hidden = true;
+          dcoSelectionElementLabel.hidden = true;
+          scriptsContainer.hidden = true;
+          errorMessageElement.hidden = true;
         }
       });
     </script>

@@ -1,5 +1,5 @@
-const variableElementId = selection.id.split("data-level-")[1];
+function func() {
+  var x = 6;
+}
 
-const variableElementId2 = selection.id.split("data-level-")[1];
-
-const variableElementId3 = selection.id.split("data-level-")[1];
+console.log(x);
