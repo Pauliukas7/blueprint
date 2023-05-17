@@ -7,11 +7,20 @@
     <title>Document</title>
     <style>
       .types-container {
+        width: 50%;
         display: flex;
+        justify-content: flex-start;
+        border: 1px solid black;
+        gap: 5px;
+      }
+
+      .website-type {
+        height: 15rem;
+        width: 15rem;
+
         border: 1px solid black;
       }
       .pagename-options-container {
-        border: 1px solid black;
         display: flex;
       }
 
@@ -28,12 +37,42 @@
         width: 70%;
         overflow: scroll;
       }
+      .input-with-question-popup-container {
+        display: flex;
+        position: relative;
 
-      .website-type {
-        height: 6rem;
-        width: 6rem;
-        border: 1px solid black;
+        height: 21px;
       }
+      .question-mark-element {
+        height: 21px;
+      }
+
+      .question-mark-element span {
+        visibility: hidden;
+        width: 100%;
+        text-align: center;
+        position: absolute;
+        margin-left: 10px;
+        z-index: 1;
+      }
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      .question-mark-element > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      .question-mark-element:hover {
+        cursor: pointer;
+      }
+      .question-mark-element:hover span {
+        visibility: visible;
+      }
+
       .website-type:hover {
         cursor: pointer;
       }
@@ -42,8 +81,7 @@
         cursor: pointer;
       }
       .page-option:hover {
-        border: 1px solid black;
-        background-color: aquamarine;
+        background-color: #fbfbf8;
       }
     </style>
   </head>
@@ -51,7 +89,7 @@
     <div id="types" class="types-container">
       <div class="website-type" id="casino">Casino</div>
       <div class="website-type" id="ecommerce">Ecommerce</div>
-      <div class="website-type" id="Newsletter">Newsletter</div>
+      <div class="website-type" id="custom">Custom Website</div>
     </div>
 
     <div class="pagename-options-container" id="options-container">
@@ -290,6 +328,10 @@
         generateCodesButton.disabled = true;
         generateCodesButton.innerText = "Generate Tracking scripts";
 
+        const trackingSetupIdInputContainer = document.createElement("div");
+        trackingSetupIdInputContainer.className =
+          "input-with-question-popup-container";
+
         const trackingSetupIdField = document.createElement("input");
         trackingSetupIdField.type = "number";
         trackingSetupIdField.placeholder = "Enter your tracking setup ID";
@@ -310,6 +352,23 @@
             generateCodesButton.disabled = true;
           }
         };
+        const trackingSetupIdQuestionMark = document.createElement("div");
+        trackingSetupIdQuestionMark.className = "question-mark-element";
+
+        trackingSetupIdQuestionMark.innerHTML =
+          "<img src='questionmark.png'> <span>Your tracking setup ID can be found by navigating to your Flow account -> <b>Buy-Side Platform</b> -> <b>Site Tracking</b> -> <b>ID</b> field on the right side </span>";
+
+        trackingSetupIdInputContainer.appendChild(trackingSetupIdField);
+        trackingSetupIdInputContainer.appendChild(trackingSetupIdQuestionMark);
+
+        const trackingDomainContainer = document.createElement("div");
+        trackingDomainContainer.className =
+          "input-with-question-popup-container";
+
+        const trackingDomainQuestionMark = document.createElement("div");
+        // trackingDomainQuestionMark.className = "question-mark-element";
+        trackingDomainQuestionMark.innerHTML =
+          "<a href='https://www.adformhelp.com/hc/en-us/articles/9740579553169' target='_blank'>Click here</a> for more information on tracking domains";
 
         const trackingDomainDropdown = document.createElement("select");
         trackingDomainDropdown.id = "trackingdomains";
@@ -330,6 +389,10 @@
         domainEMEA.value = "track.adform.net";
         domainEMEA.innerText = "EMEA (track.adform.net)";
 
+        const domainEMEAServer = document.createElement("option");
+        domainEMEAServer.value = "server.adform.net";
+        domainEMEAServer.innerText = "EMEA (server.adform.net)";
+
         const domainGLOBAL = document.createElement("option");
         domainGLOBAL.value = "a1.adform.net";
         domainGLOBAL.innerText = "GLOBAL (a1.adform.net)";
@@ -338,16 +401,19 @@
         trackingDomainDropdown.appendChild(domainAmericas);
         trackingDomainDropdown.appendChild(domainAPAC);
         trackingDomainDropdown.appendChild(domainCHINA);
+        trackingDomainDropdown.appendChild(domainEMEAServer);
         trackingDomainDropdown.appendChild(domainGLOBAL);
         window.trackingDomain = trackingDomainDropdown.value;
 
         trackingDomainDropdown.onchange = () =>
           (window.trackingDomain = trackingDomainDropdown.value);
+        trackingDomainContainer.appendChild(trackingDomainDropdown);
+        trackingDomainContainer.appendChild(trackingDomainQuestionMark);
 
-        pageNamesContainer.appendChild(trackingSetupIdField);
+        pageNamesContainer.appendChild(trackingSetupIdInputContainer);
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(document.createElement("br"));
-        pageNamesContainer.appendChild(trackingDomainDropdown);
+        pageNamesContainer.appendChild(trackingDomainContainer);
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(generateCodesButton);
@@ -614,7 +680,7 @@
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
-        HttpHost: 'track.adform.net',
+        HttpHost: '${trackingDomain}',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
         pagename: encodeURIComponent('${pageName}'),
@@ -626,7 +692,7 @@
 &#x3C;/script&#x3E;
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
                     pageName
                   )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
@@ -647,13 +713,9 @@
                       "\n" +
                       "              ";
                   } else {
-                    if ((key = "step")) {
-                      variablesString = variablesString + `${key}: 1`;
-                    } else {
-                      variablesString =
-                        variablesString +
-                        `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                    }
+                    variablesString =
+                      variablesString +
+                      `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                   }
                 }
                 document.querySelector(
@@ -662,7 +724,7 @@
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
-        HttpHost: 'track.adform.net',
+        HttpHost: '${trackingDomain}',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
         pagename: encodeURIComponent('${pageName}'),
@@ -678,7 +740,7 @@
 &#x3C;/script&#x3E;
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
                   pageName
                 )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
@@ -724,7 +786,7 @@
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
-        HttpHost: 'track.adform.net',
+        HttpHost: '${trackingDomain}',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
         pagename: encodeURIComponent('${pageName}'),
@@ -741,7 +803,7 @@
 &#x3C;/script&#x3E;
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
                   pageName
                 )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
@@ -755,7 +817,7 @@
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
-        HttpHost: 'track.adform.net',
+        HttpHost: '${trackingDomain}',
         pm: ${trackingSetupID},
         divider: encodeURIComponent('|'),
         pagename: encodeURIComponent('${pageName}')
@@ -764,7 +826,7 @@
 &#x3C;/script&#x3E;
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://track.adform.net/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
+        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
                   pageName
                 )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
@@ -872,6 +934,7 @@
 
       const casinoType = document.getElementById("casino");
       const ecommerceType = document.getElementById("ecommerce");
+      const customType = document.getElementById("custom");
       const casinoOptions = [
         "Homepage",
         "Registration",
@@ -886,12 +949,15 @@
         "Check-out page",
         "Purchase Completed"
       ];
+      const customOptions = ["Homepage"];
       casinoType.addEventListener("click", () => {
         if (window.currentPage !== "casino") {
           window.currentPage = "casino";
           createPagesCheckboxList(casinoOptions);
           pageNamesContainer.hidden = false;
           scriptsContainer.hidden = true;
+          dcoSelectionElement.checked = false;
+          window.dcoTemplateSelected = false;
         } else {
           pageNamesContainer.hidden = !pageNamesContainer.hidden;
         }
@@ -917,6 +983,23 @@
         if (pageNamesContainer.hidden) {
           dcoSelectionElement.hidden = true;
           dcoSelectionElementLabel.hidden = true;
+          scriptsContainer.hidden = true;
+          errorMessageElement.hidden = true;
+        }
+      });
+
+      customType.addEventListener("click", () => {
+        if (window.currentPage !== "custom") {
+          window.currentPage = "custom";
+          createPagesCheckboxList(customOptions);
+          pageNamesContainer.hidden = false;
+          scriptsContainer.hidden = true;
+          dcoSelectionElement.checked = false;
+          window.dcoTemplateSelected = false;
+        } else {
+          pageNamesContainer.hidden = !pageNamesContainer.hidden;
+        }
+        if (pageNamesContainer.hidden) {
           scriptsContainer.hidden = true;
           errorMessageElement.hidden = true;
         }
