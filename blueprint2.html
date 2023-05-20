@@ -105,6 +105,12 @@
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
+      const stepValue = {
+        ProductPage: 1,
+        BasketPage: 2,
+        PurchaseCompleted: 3
+      };
+
       window.generateCodesButtonDisabled = true;
       window.dcoTemplateSelected = false;
       window.selectedPageNames = [];
@@ -335,7 +341,7 @@
         const trackingSetupIdField = document.createElement("input");
         trackingSetupIdField.type = "number";
         trackingSetupIdField.placeholder = "Enter your tracking setup ID";
-        trackingSetupIdField.onchange = () => {
+        trackingSetupIdField.oninput = () => {
           trackingIdFieldNotEmpty = trackingSetupIdField.value.length > 0;
           trackingIdFieldNotEmpty
             ? (window.trackingIdNotEmpty = true)
@@ -356,7 +362,7 @@
         trackingSetupIdQuestionMark.className = "question-mark-element";
 
         trackingSetupIdQuestionMark.innerHTML =
-          "<img src='questionmark.png'> <span>Your tracking setup ID can be found by navigating to your Flow account -> <b>Buy-Side Platform</b> -> <b>Site Tracking</b> -> <b>ID</b> field on the right side </span>";
+          "<img src='questionmarks.png' alt='?'> <span>Your tracking setup ID can be found by navigating to your Flow account -> <b>Buy-Side Platform</b> -> <b>Site Tracking</b> -> <b>ID</b> field on the right side </span>";
 
         trackingSetupIdInputContainer.appendChild(trackingSetupIdField);
         trackingSetupIdInputContainer.appendChild(trackingSetupIdQuestionMark);
@@ -657,26 +663,26 @@
         `;
             let variablesContainerElements;
             function renderDOM() {
-              if (orderVars.length > 0 || productVars.length > 0) {
-                if (orderVars.length > 0 && productVars.length === 0) {
-                  let variablesString = "";
-                  for (var key of orderVars) {
-                    const index = orderVars.indexOf(key);
-                    if (index < orderVars.length - 1) {
-                      variablesString =
-                        variablesString +
-                        `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
-                        "\n" +
-                        "          ";
-                    } else {
-                      variablesString =
-                        variablesString +
-                        `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
-                    }
+              if (orderVars.length > 0 && productVars.length === 0) {
+                let variablesString = "";
+                orderVars.sort();
+                for (var key of orderVars) {
+                  const index = orderVars.indexOf(key);
+                  if (index < orderVars.length - 1) {
+                    variablesString =
+                      variablesString +
+                      `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                      "\n" +
+                      "          ";
+                  } else {
+                    variablesString =
+                      variablesString +
+                      `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
                   }
-                  document.querySelector(
-                    `.${pageClassName}`
-                  ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
+                }
+                document.querySelector(
+                  `.${pageClassName}`
+                ).innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
     window._adftrack.push({
@@ -693,12 +699,11 @@
 &#x3C;noscript&#x3E;
     &#x3C;p style="margin:0;padding:0;border:0;">
         &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-                    pageName
-                  )}&ADFdivider=|" width="1" height="1" alt="" />
+                  pageName
+                )}&ADFdivider=|" width="1" height="1" alt="" />
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
-                }
               }
 
               if (orderVars.length === 0 && productVars.length > 0) {
@@ -709,13 +714,25 @@
                   if (index < productVars.length - 1) {
                     variablesString =
                       variablesString +
-                      `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                      `${key}:  ${
+                        key === "step"
+                          ? window.dcoTemplateSelected
+                            ? `${stepValue[pageClassName]},`
+                            : `'&#x3C;insert ${key} value here&#x3E;',`
+                          : `'&#x3C;insert ${key} value here&#x3E;',`
+                      } ` +
                       "\n" +
                       "              ";
                   } else {
                     variablesString =
                       variablesString +
-                      `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                      `${key}:  ${
+                        key === "step"
+                          ? window.dcoTemplateSelected
+                            ? stepValue[pageClassName]
+                            : `'&#x3C;insert ${key} value here&#x3E;'`
+                          : `'&#x3C;insert ${key} value here&#x3E;'`
+                      } `;
                   }
                 }
                 document.querySelector(
@@ -750,6 +767,7 @@
 
               if (orderVars.length > 0 && productVars.length > 0) {
                 let orderVariablesString = "";
+                orderVars.sort();
                 for (var key of orderVars) {
                   const index = orderVars.indexOf(key);
                   if (index < orderVars.length - 1) {
@@ -766,18 +784,31 @@
                 }
 
                 let productVariablesString = "";
+                productVars.sort();
                 for (var key of productVars) {
                   const index = productVars.indexOf(key);
                   if (index < productVars.length - 1) {
                     productVariablesString =
                       productVariablesString +
-                      `${key}: '&#x3C;insert ${key} value here&#x3E;',` +
+                      `${key}:  ${
+                        key === "step"
+                          ? window.dcoTemplateSelected
+                            ? `${stepValue[pageClassName]},`
+                            : `'&#x3C;insert ${key} value here&#x3E;',`
+                          : `'&#x3C;insert ${key} value here&#x3E;',`
+                      } ` +
                       "\n" +
                       "              ";
                   } else {
                     productVariablesString =
                       productVariablesString +
-                      `${key}: '&#x3C;insert ${key} value here&#x3E;'`;
+                      `${key}:  ${
+                        key === "step"
+                          ? window.dcoTemplateSelected
+                            ? stepValue[pageClassName]
+                            : `'&#x3C;insert ${key} value here&#x3E;'`
+                          : `'&#x3C;insert ${key} value here&#x3E;'`
+                      } `;
                   }
                 }
                 document.querySelector(
