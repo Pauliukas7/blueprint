@@ -335,7 +335,7 @@
         const trackingSetupIdField = document.createElement("input");
         trackingSetupIdField.type = "number";
         trackingSetupIdField.placeholder = "Enter your tracking setup ID";
-        trackingSetupIdField.onchange = () => {
+        trackingSetupIdField.oninput = () => {
           trackingIdFieldNotEmpty = trackingSetupIdField.value.length > 0;
           trackingIdFieldNotEmpty
             ? (window.trackingIdNotEmpty = true)
