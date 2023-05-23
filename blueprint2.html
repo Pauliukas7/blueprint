@@ -1,11 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
+
+<div class="container -mb-6" id="page-container">
+  <div class="row row-lg">
+    <div class="col pb-6">
+      <nav class="font-size-md mt-6">
+        <ol class="breadcrumbs">
+          <li title="Adform">
+            <a href="/hc/en-us">Homepage</a>
+          </li>
+          <li title="Release Notes">Site Tracking Blueprint</li>
+        </ol>
+      </nav>
+
+      <header class="sm:flex justify-content-between">
+        <h1 class="w-full md:mt-2">Site Tracking Blueprint</h1>
+      </header>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <p>LOL</p>
+        </div>
+        <div class="panel-body collapse">BODY</div>
+      </div>
+      <style>
+
       .types-container {
         width: 50%;
         display: flex;
@@ -22,32 +38,56 @@
       }
       .pagename-options-container {
         display: flex;
+        max-width: 45rem;
       }
 
       .scripts-and-vars {
-        border: 1px solid black;
+    
         display: flex;
         height: 20rem;
+    
       }
       .variables- {
-        border: 1px solid black;
+  
         overflow: scroll;
+        width: 30rem;
       }
-      .code-snippet {
-        width: 70%;
-        overflow: scroll;
+      .code-toolbar {
+        overflow-x: scroll;
+        overflow-y: auto ;
+
       }
       .input-with-question-popup-container {
         display: flex;
         position: relative;
-
         height: 21px;
+      }
+
+      .input-with-question-popup-container > select {
+        height: 2rem;
+      }
+      .input-with-question-popup-container {
+        display: flex;
+        position: relative;
+        
+        height: 21px;
+      }
+      .tracking-domain-information-text {
+        margin-inline-start: 5px;
       }
       .question-mark-element {
         height: 21px;
       }
+      .question-mark-symbol {
+        margin-inline: 6px;
+        font-size: large;
+        font-weight: bold;
+      }
+      .question-mark-element:hover .question-mark-symbol {
+        color: #798297;
+      }
 
-      .question-mark-element span {
+      .question-mark-element .question-mark-hover-text {
         visibility: hidden;
         width: 100%;
         text-align: center;
@@ -61,10 +101,7 @@
         margin: 0;
       }
 
-      .question-mark-element > img {
-        max-width: 100%;
-        max-height: 100%;
-      }
+
 
       .question-mark-element:hover {
         cursor: pointer;
@@ -82,6 +119,7 @@
       }
       .page-option:hover {
         background-color: #fbfbf8;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -126,6 +164,8 @@
 
       function createPagesCheckboxList(pageNamesArray) {
         const generateCodesButton = document.createElement("button");
+        generateCodesButton.className ="button button-primary"
+
         dcoSelectionElement.onchange = () => {
           window.dcoTemplateSelected = dcoSelectionElement.checked
             ? true
@@ -259,6 +299,7 @@
         const addCustomPageNameButton = document.createElement("button");
         addCustomPageNameButton.innerText = "Add another page name";
         addCustomPageNameButton.id = "addCustomPage";
+        addCustomPageNameButton.className = "button button-secondary";
 
         addCustomPageNameButton.addEventListener("click", () => {
           custom_id_number++;
@@ -327,7 +368,15 @@
 
         generateCodesButton.disabled = true;
         generateCodesButton.innerText = "Generate Tracking scripts";
+        const p = document.createElement("p")
+        p.innerText = "Enter your tracking setup ID:"
+         pageNamesContainer.appendChild(p);
+         const trackingSetupIdQuestionMark = document.createElement("span");
+        trackingSetupIdQuestionMark.className = "question-mark-element";
 
+        trackingSetupIdQuestionMark.innerHTML =
+          `<span class='question-mark-symbol'>?</span> <span class="question-mark-hover-text">Your tracking setup ID can be found by navigating to your Flow account -> <b>Buy-Side Platform</b> -> <b>Site Tracking</b> -> <b>ID</b> field on the right side </span>`;
+          pageNamesContainer.appendChild(trackingSetupIdQuestionMark)
         const trackingSetupIdInputContainer = document.createElement("div");
         trackingSetupIdInputContainer.className =
           "input-with-question-popup-container";
@@ -352,24 +401,19 @@
             generateCodesButton.disabled = true;
           }
         };
-        const trackingSetupIdQuestionMark = document.createElement("div");
-        trackingSetupIdQuestionMark.className = "question-mark-element";
-
-        trackingSetupIdQuestionMark.innerHTML =
-          "<img src='questionmark.png'> <span>Your tracking setup ID can be found by navigating to your Flow account -> <b>Buy-Side Platform</b> -> <b>Site Tracking</b> -> <b>ID</b> field on the right side </span>";
+        
 
         trackingSetupIdInputContainer.appendChild(trackingSetupIdField);
-        trackingSetupIdInputContainer.appendChild(trackingSetupIdQuestionMark);
+        
 
         const trackingDomainContainer = document.createElement("div");
         trackingDomainContainer.className =
           "input-with-question-popup-container";
 
-        const trackingDomainQuestionMark = document.createElement("div");
-        // trackingDomainQuestionMark.className = "question-mark-element";
-        trackingDomainQuestionMark.innerHTML =
+        const trackingDomainInformationText = document.createElement("div");
+        trackingDomainInformationText.innerHTML =
           "<a href='https://www.adformhelp.com/hc/en-us/articles/9740579553169' target='_blank'>Click here</a> for more information on tracking domains";
-
+        trackingDomainInformationText.className = "tracking-domain-information-text"
         const trackingDomainDropdown = document.createElement("select");
         trackingDomainDropdown.id = "trackingdomains";
 
@@ -408,7 +452,7 @@
         trackingDomainDropdown.onchange = () =>
           (window.trackingDomain = trackingDomainDropdown.value);
         trackingDomainContainer.appendChild(trackingDomainDropdown);
-        trackingDomainContainer.appendChild(trackingDomainQuestionMark);
+        trackingDomainContainer.appendChild(trackingDomainInformationText);
 
         pageNamesContainer.appendChild(trackingSetupIdInputContainer);
         pageNamesContainer.appendChild(document.createElement("br"));
@@ -434,12 +478,11 @@
 
           pageNamesArray.forEach((pageName) => {
             const pre = document.createElement("pre");
-            pre.className = "programlisting js";
-            pre.classList.add("code-snippet");
-            pre.setAttribute("data-language", "js");
+            pre.className = "language-js hljs javascript code-snippet";
             const code = document.createElement("code");
             const pageClassName = pageName.replaceAll(" ", "");
             code.className = pageClassName;
+      			code.classList.add("language-js")
             code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
@@ -465,7 +508,7 @@
             const varsDiv = document.createElement("div");
             varsDiv.className = "variables- " + pageClassName;
             varsDiv.innerHTML = `
-        Use Variables
+        Variables
         <br />
         <br />
         <input type="checkbox" value="sales" id="sales" data-level="order" />
@@ -699,6 +742,7 @@
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
                 }
+                Prism.highlightAll()
               }
 
               if (orderVars.length === 0 && productVars.length > 0) {
@@ -746,6 +790,7 @@
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+Prism.highlightAll()
               }
 
               if (orderVars.length > 0 && productVars.length > 0) {
@@ -809,6 +854,7 @@
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+Prism.highlightAll()
               }
               if (orderVars.length === 0 && productVars.length === 0) {
                 document.querySelector(
@@ -832,6 +878,7 @@
     &#x3C;/p&#x3E;
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
+Prism.highlightAll()
               }
             }
             window.orderLevelVars[`${pageClassName}`] = [];
@@ -869,6 +916,7 @@
                     }
                   }
                   renderDOM();
+
                 });
               });
 
@@ -929,6 +977,7 @@
             trackingSetupIdField.value,
             window.trackingDomain
           );
+      
         });
       }
 
@@ -1005,5 +1054,3 @@
         }
       });
     </script>
-  </body>
-</html>
