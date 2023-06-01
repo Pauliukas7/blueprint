@@ -188,49 +188,56 @@
       <div class="pagenames" id="pagenames" hidden></div>
 
     </div>
-    <div id="error-message" hidden></div>
+
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
+      //step values for when DCO Template is selected
       const stepValue = {
         ProductPage: 1,
         BasketPage: 2,
         PurchaseCompleted: 3
       };
+
+      //Global state variables, that are used throughout the entire app. For example, when you select page names, they will be added to selectedPageNames array and used for generating the scripts
       window.generateCodesButtonDisabled = true;
       window.dcoTemplateSelected = false;
       window.selectedPageNames = [];
       window.productLevelVars = {};
       window.orderLevelVars = {};
       window.generatedDomain = null;
+      //Global state end
       
-      const HTMLSCRIPTS = "";
-      function insertAfter(newNode, existingNode) {
-        existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-      }
+      //JS Variables for the existing HTML containers
       const websiteTypesContainer = document.getElementById("types");
       const optionsContainer = document.getElementById("options-container");
       const pageNamesContainer = document.getElementById("pagenames");
-      
-
-      const errorMessageElement = document.getElementById("error-message");
       const scriptsContainer = document.getElementById("scripts");
+      //JS Variables end
 
+      /*createPagesCheckboxList is a function that executes when you select a website type.
+      An array of pagenames is passed to it and it generates page-option containers, which consist of:
+      1. <input type="checkbox"> element
+      2. <label> element for that specific input (with the pagename Text e.g. "Homepage")
+      */
       function createPagesCheckboxList(pageNamesArray) {
+        //Create the main "Generate Tracking Scripts" button
         const generateCodesButton = document.createElement("button");
         generateCodesButton.className ="button button-primary"
-
-        
+        generateCodesButton.innerText = "Generate Tracking Scripts";
+        generateCodesButton.disabled = true;
 
         pageNamesContainer.innerHTML = "";
         let IDarray = [];
         window.numOfPagesChecked = 0;
         window.trackingIdNotEmpty = false;
+        //For each pagename selecetd the following codeblock is executed
         pageNamesArray.forEach((pageName) => {
+          //Create <input type="checkbox"> element
           const pageCheckbox = document.createElement("input");
           pageCheckbox.type = "checkbox";
           pageCheckbox.id = pageName.split(" ").join("").toLowerCase(); //e.g. "First time deposit" html element id will be "firsttimedeposit"
-          IDarray.push(pageCheckbox.id);
+          IDarray.push(pageCheckbox.id);// Global HTML element ID array, which will be something like ["Homepage", "Basket page"] etc.
           pageCheckbox.className = "checkbox";
           pageCheckbox.value = pageName;
           pageCheckbox.onchange = () => {
@@ -246,19 +253,22 @@
               generateCodesButton.disabled = true;
             }
           };
-          //Create a label for every checkbox
+          //Create a label for every checkbox created. The label contains the pagename text e.g. "Homepage"
           const pageLabel = document.createElement("label");
           pageLabel.htmlFor = pageCheckbox.id;
           pageLabel.innerText = pageName;
           pageLabel.className = "checkbox";
+          
 
-          //
+          //Create a page-option container, which will hold the input checkbox and label
           const pageContainer = document.createElement("div");
           pageContainer.className = "page-option";
 
+          //page-option container appends the checkbox and pagename text
           pageContainer.appendChild(pageCheckbox);
           pageContainer.appendChild(pageLabel);
-          
+
+          //If selected website type is "ecommerce" it also adds the "DCO Template" checkbox to the first "page-option" ("Homepage") container
           if (window.currentPage === "ecommerce" && pageName === "Homepage" ) {
             const dcoTemplateCheckbox = document.createElement("input");
           dcoTemplateCheckbox.type = "checkbox";
@@ -304,18 +314,23 @@
           }
         };
           }
+          ////If selected website type is "ecommerce" - END
           
-
+          /*pageNamesContainer <div id="pagenames"> is HTML element that sits in between website-type options and the generated scripts
+          It will contain the pagenames list, custom pagename input field, "Add Another TP" button, Tracking Domain dropdown, Tracking ID input field,
+          "Generate scripts button" */
           pageNamesContainer.appendChild(pageContainer);
           pageNamesContainer.appendChild(document.createElement("br"));
         });
         let custom_id_number = 0;
        
         custom_id_number++;
+
+        //Custom pagename checkbox creation
         const customCheckbox = document.createElement("input");
         customCheckbox.type = "checkbox";
         customCheckbox.id = "custom" + custom_id_number;
-        IDarray.push(customCheckbox.id);
+        IDarray.push(customCheckbox.id);// Global HTML element ID array, which will be something like ["Homepage", "Basket page"] etc.
         customCheckbox.className = "checkbox";
         customCheckbox.value = "";
         customCheckbox.onchange = () => {
@@ -335,7 +350,9 @@
             generateCodesButton.disabled = true;
           }
         };
+        //Custom pagename checkbox creation END
 
+        //Custom pagename input field creation
         const customPageNameInputField = document.createElement("input");
         customPageNameInputField.placeholder = "Insert your TP name";
         const pageContainerCustom = document.createElement("div");
@@ -364,12 +381,16 @@
             generateCodesButton.disabled = true;
           }
         };
+        //Custom pagename input field creation - END
 
+        //Button creation for "Add another TP" option
         const addCustomPageNameButton = document.createElement("button");
         addCustomPageNameButton.innerText = "Add another Tracking Point";
         addCustomPageNameButton.id = "addCustomPage";
         addCustomPageNameButton.className = "button button-secondary";
+        
 
+        //"Add another TP" button click listener:
         addCustomPageNameButton.addEventListener("click", () => {
           custom_id_number++;
           const newCustomPageContainer = pageContainerCustom.cloneNode(true);
@@ -430,16 +451,21 @@
             thisButton
           );
         });
+        //"Add another TP" button click listener - END
 
+        //pageNamesContainer <div id="pagenames"> sitting between website-type options and generated scripts -appends "Add another TP" button
         pageNamesContainer.appendChild(addCustomPageNameButton);
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(document.createElement("br"));
 
-        generateCodesButton.disabled = true;
-        generateCodesButton.innerText = "Generate Tracking scripts";
+      
+        
+      
         const p = document.createElement("p")
         p.innerText = "Enter your tracking setup ID:"
          pageNamesContainer.appendChild(p);
+
+         //Tracking setup ID input field creation (with question mark hover element)
          const trackingSetupIdQuestionMark = document.createElement("div");
         trackingSetupIdQuestionMark.className = "question-mark-element";
 
@@ -451,6 +477,9 @@
           
           const trackingSetupIdField = document.createElement("input");
           trackingSetupIdField.type = "number";
+          ////Tracking setup ID input field creation (with question mark hover element) - END 
+
+
 
           trackingSetupIdField.oninput = () => {
             trackingIdFieldNotEmpty = trackingSetupIdField.value.length > 3;
@@ -474,7 +503,7 @@
             trackingSetupIdInputContainer.appendChild(trackingSetupIdField);
             trackingSetupIdInputContainer.appendChild(trackingSetupIdQuestionMark);
             
-
+        //Tracking domain dropdown element creation  
         const trackingDomainContainer = document.createElement("div");
         trackingDomainContainer.className =
           "input-with-question-popup-container";
@@ -516,8 +545,11 @@
         trackingDomainDropdown.appendChild(domainCHINA);
         trackingDomainDropdown.appendChild(domainEMEAServer);
         trackingDomainDropdown.appendChild(domainGLOBAL);
+        //Tracking domain dropdown element creation  - END
+
         window.trackingDomain = trackingDomainDropdown.value;
       
+        //"Tracking domain changed" element creation - it appears when scripts are already generated but user changes tracking domain
        const trackingDomainChangedTextElement = document.createElement("div");
       trackingDomainChangedTextElement.innerText =
           "Generate Scripts again to apply new Domain";
@@ -549,12 +581,16 @@
         pageNamesContainer.appendChild(document.createElement("br"));
         pageNamesContainer.appendChild(generateCodesButton);
 
+
+        //GenerateScripts is a long function that generates the actual codes. It takes in pagenames array, tracking setup ID and tracking domain arguments.
         function GenerateScripts(
           pageNamesArray,
           trackingSetupID,
           trackingDomain
         ) {
           let scriptNodeList = [];
+
+          //If DCO Checkbox is ticked, the paganames automatically overriden and become "Product page", "Basket Page" and "Purchase completed"
           if (window.dcoTemplateSelected) {
             pageNamesArray = [
               "Product Page",
@@ -565,14 +601,23 @@
 window.generatedDomain = window.trackingDomain
 const domainChangedText = document.getElementById('tracking-domain-changed-text')
       domainChangedText.hidden = true
+
+          //For each pagename create Adform script and a variables menu
           pageNamesArray.forEach((pageName) => {
-      			
+
+      			/*<pre>
+              <code></code>
+              <pre>
+              block will automatically be put inside <div class="code-toolbar"> container
+              */
             const pre = document.createElement("pre");
-            pre.className = "language-js hljs javascript code-snippet";
+            pre.className = "language-js hljs javascript code-snippet";//zendesk classes
             const code = document.createElement("code");
             const pageClassName = pageName.replaceAll(" ", "");
             code.className = pageClassName;
-      			code.classList.add("language-js")
+      			code.classList.add("language-js")//zendesk classes
+
+            //Adform tracking script rendered:
             code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
 &#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
     window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
@@ -593,9 +638,12 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
 &#x3C;/noscript&#x3E;
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
 
+            //<div class="scripts-and-vars"> is the container element for rendered code + variables menu
             const scriptsDiv = document.createElement("div");
             scriptsDiv.className = "scripts-and-vars";
             const varsDiv = document.createElement("div");
+
+            //Variables menu
             varsDiv.className = "variables- " + pageClassName;
             varsDiv.innerHTML = `
               Variables
@@ -610,7 +658,7 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
           id="orderid"
           data-level="order"
         />
-        <label for="sales">Order ID</label>
+        <label for="orderid">Order ID</label>
         <br />
         <br />
         <div>Product variables:</div>
@@ -948,8 +996,32 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
       
         `;
             let variablesContainerElements;
+
+            /*renderDOM function is executed with every variable checkbox onchange and variable level onchange. It is executed for each individual script rendered, 
+            meaning if there is "Homepage" and "Product page" (total of 2 scripts) rendered, this renderDOM function function acts individually for each of those blocks.
+            If a user selects a variable in Homepage variables menu, it will only affect the code in Homepage script, it will not touch Products page
+            It has 4 if blocks:
+            - if there are both order and product level vars selected 
+            - if there is only order level vars selected
+            - if there is only product level vars selected
+            - if there are no vars selected (when you had variables selected, but untick all of them) - Generates same template as "Generate Scripts button"
+             */
+
+
+             /*-------------IMPORTANT---------------------
+             the rendered template literal string (with `backticks` instead of "quotes") is whitespace sensitive, meaning if you eliminate/edit whitespace, it will also reflect in 
+             the rendered Adform script
+             for example:
+             order: {
+                itms:
+             }
+             the left margin of "itms" is what is referred here as whitespace.
+             */
             function renderDOM() {
+
+              
               if (orderVars.length > 0 || productVars.length > 0) {
+                //If only order level vars are selected
                 if (orderVars.length > 0 && productVars.length === 0) {
                   let variablesString = "";
                   for (var key of orderVars) {
@@ -993,7 +1065,7 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
                 }
                 Prism.highlightAll()
               }
-
+              ////If only product level vars are selected
               if (orderVars.length === 0 && productVars.length > 0) {
                 let variablesString = "";
                 productVars.sort();
@@ -1053,7 +1125,7 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
       Prism.highlightAll()
               }
-
+              //If order & product level vars are selected
               if (orderVars.length > 0 && productVars.length > 0) {
                 let orderVariablesString = "";
                 orderVars.sort();
@@ -1131,6 +1203,7 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
 &#x3C;!-- Adform Tracking Code END --&#x3E;`;
       Prism.highlightAll()
               }
+              //if no wars are selected
               if (orderVars.length === 0 && productVars.length === 0) {
                 document.querySelector(
                   `.${pageClassName}`
@@ -1156,11 +1229,16 @@ const domainChangedText = document.getElementById('tracking-domain-changed-text'
 Prism.highlightAll()
               }
             }
+
+            //global window variables states for each page name
             window.orderLevelVars[`${pageClassName}`] = [];
             window.productLevelVars[`${pageClassName}`] = [];
-
+            
+            //same global vars put into JS variables
             const orderVars = window.orderLevelVars[`${pageClassName}`];
             const productVars = window.productLevelVars[`${pageClassName}`];
+
+            //setTimeout workaround for adding event listeners to HTML elements created in real time with renderDOM
             setTimeout(() => {
               variablesContainerElements = varsDiv.childNodes;
 
@@ -1170,7 +1248,7 @@ Prism.highlightAll()
                 const variableElementId = selection.id.split("data-level-")[1];
                 const variableCheckbox =
                   document.getElementById(variableElementId);
-                selection.addEventListener("change", () => {
+                selection.onchange = () => {
                   const dataSetAfterChange = selection.value.toLowerCase();
 
                   variableCheckbox.dataset.level = dataSetAfterChange;
@@ -1192,7 +1270,7 @@ Prism.highlightAll()
                   }
                   renderDOM();
 
-                });
+                };
               });
 
               variablesContainerElements.forEach((element) => {
@@ -1230,6 +1308,7 @@ Prism.highlightAll()
               });
             }, 0);
 
+
             pre.appendChild(code);
       		  const pagenameDiv = document.createElement('div')
       pagenameDiv.innerHTML = `<p>Tracking Point <span class="span-bold">${pageName}</span>: </p>`
@@ -1250,13 +1329,19 @@ Prism.highlightAll()
           scriptsContainer.hidden = false;
         }
 
+
+        //"Generate Scripts" button event listener
         generateCodesButton.addEventListener("click", () => {
           window.selectedPageNames = [];
+          //IDarray holds all rendered paganame HTML element ids like "homepage" "productpage" etc.
           IDarray.forEach((ID) => {
+            //Check if that element is "checked"
             const pageName = document.getElementById(ID);
             if (pageName.checked && pageName.value.length > 0)
+            //if "checked" push to selectedPageNames global array
               window.selectedPageNames.push(pageName.value);
           });
+          //generate scripts with selected page names
           GenerateScripts(
             window.selectedPageNames,
             trackingSetupIdField.value,
@@ -1265,10 +1350,14 @@ Prism.highlightAll()
       
         });
       }
+   
+
 
       const casinoType = document.getElementById("casino");
       const ecommerceType = document.getElementById("ecommerce");
       const customType = document.getElementById("custom");
+
+
       const casinoOptions = [
         "Homepage",
         "Registration",
@@ -1283,7 +1372,10 @@ Prism.highlightAll()
         "Check-out page",
         "Purchase Completed"
       ];
+
       const customOptions = ["Homepage"];
+
+      //Each website type element on click generates the corresponding page names options
       casinoType.addEventListener("click", () => {
       casinoType.classList.add("selected")
       ecommerceType.classList.remove("selected")
@@ -1299,9 +1391,10 @@ Prism.highlightAll()
         }
         if (pageNamesContainer.hidden) {
           scriptsContainer.hidden = true;
-          errorMessageElement.hidden = true;
         }
       });
+
+      //Each website type element on click generates the corresponding page names options
       ecommerceType.addEventListener("click", () => {
       ecommerceType.classList.add("selected")
       casinoType.classList.remove("selected")
@@ -1320,13 +1413,14 @@ Prism.highlightAll()
         if (pageNamesContainer.hidden) {
 
           scriptsContainer.hidden = true;
-          errorMessageElement.hidden = true;
         }
       });
 const dcoSelectionElement = document.getElementById("dcoselection");
       const dcoSelectionElementLabel =
         document.getElementById("dcoselectionlabel");
 
+
+        //Each website type element on click generates the corresponding page names options
       customType.addEventListener("click", () => {
       customType.classList.add("selected")
       ecommerceType.classList.remove("selected")
@@ -1342,7 +1436,6 @@ const dcoSelectionElement = document.getElementById("dcoselection");
         }
         if (pageNamesContainer.hidden) {
           scriptsContainer.hidden = true;
-          errorMessageElement.hidden = true;
         }
       });
     </script>
