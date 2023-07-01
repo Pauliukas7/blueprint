@@ -192,24 +192,6 @@
     <div id="scripts" class="codes-container" hidden></div>
 
     <script>
-      /*When cloning the code to your local machine (vscode), add this function here at the beginning:
-      // const Prism = { highlightAll: ()=>console.log('prism')}
-      
-      "Generate Tracking scripts" button and renderDOM function uses Prism.highlightAll() function (imported from zendesk, outside of this file) to give syntax highlighting to codes
-      and when you use it in your local machine, it breaks the whole project. In your local machine you will not see syntax highlighting and will not see variables section, therefore
-      working on the code in your local machine eliminates troubleshooting those 2 specific functionalities (variables menu become invisible because of some missing zendesk CSS)
-      */
-      
-      
-      
-      //step values for when DCO Template is selected
-      const stepValue = {
-        ProductPage: 1,
-        BasketPage: 2,
-        PurchaseCompleted: 3
-      };
-
-      //Global state variables, that are used throughout the entire app. For example, when you select page names, they will be added to selectedPageNames array and used for generating the scripts
       window.generateCodesButtonDisabled = true;
       window.dcoTemplateSelected = false;
       window.selectedPageNames = [];
