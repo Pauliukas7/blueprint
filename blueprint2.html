@@ -210,7 +210,7 @@
       };
 
       //Global state variables, that are used throughout the entire app. For example, when you select page names, they will be added to selectedPageNames array and used for generating the scripts
-      window.generateCodesButtonDisabled = true;
+       
       window.dcoTemplateSelected = false;
       window.selectedPageNames = [];
       window.productLevelVars = {};
@@ -256,10 +256,10 @@
               (trackingIdNotEmpty && numOfPagesChecked > 0) ||
               (trackingIdNotEmpty && window.dcoTemplateSelected)
             ) {
-              window.generateCodesButtonDisabled = false;
+             
               generateCodesButton.disabled = false;
             } else {
-              window.generateCodesButtonDisabled = true;
+            
               generateCodesButton.disabled = true;
             }
           };
@@ -317,10 +317,10 @@
             (trackingIdNotEmpty && window.dcoTemplateSelected)
           ) {
             generateCodesButton.disabled = false;
-            window.generateCodesButtonDisabled = false;
+    
           } else {
             generateCodesButton.disabled = true;
-            window.generateCodesButtonDisabled = true;
+ 
           }
         };
           }
@@ -353,10 +353,10 @@
             (trackingIdNotEmpty && numOfPagesChecked > 0) ||
             (trackingIdNotEmpty && window.dcoTemplateSelected)
           ) {
-            window.generateCodesButtonDisabled = false;
+       
             generateCodesButton.disabled = false;
           } else {
-            window.generateCodesButtonDisabled = true;
+    
             generateCodesButton.disabled = true;
           }
         };
@@ -384,10 +384,10 @@
             (trackingIdNotEmpty && numOfPagesChecked > 0) ||
             (trackingIdNotEmpty && window.dcoTemplateSelected)
           ) {
-            window.generateCodesButtonDisabled = false;
+       
             generateCodesButton.disabled = false;
           } else {
-            window.generateCodesButtonDisabled = true;
+      
             generateCodesButton.disabled = true;
           }
         };
@@ -421,10 +421,10 @@
               (trackingIdNotEmpty && numOfPagesChecked > 0) ||
               (trackingIdNotEmpty && window.dcoTemplateSelected)
             ) {
-              window.generateCodesButtonDisabled = false;
+          
               generateCodesButton.disabled = false;
             } else {
-              window.generateCodesButtonDisabled = true;
+         
               generateCodesButton.disabled = true;
             }
           };
@@ -444,10 +444,10 @@
               (trackingIdNotEmpty && numOfPagesChecked > 0) ||
               (trackingIdNotEmpty && window.dcoTemplateSelected)
             ) {
-              window.generateCodesButtonDisabled = false;
+       
               generateCodesButton.disabled = false;
             } else {
-              window.generateCodesButtonDisabled = true;
+
               generateCodesButton.disabled = true;
             }
           };
@@ -501,10 +501,10 @@
               (trackingIdNotEmpty && numOfPagesChecked > 0) ||
               (trackingIdNotEmpty && window.dcoTemplateSelected)
               ) {
-                window.generateCodesButtonDisabled = false;
+      
                 generateCodesButton.disabled = false;
               } else {
-                window.generateCodesButtonDisabled = true;
+  
                 generateCodesButton.disabled = true;
               }
             };

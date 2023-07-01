@@ -1,478 +1,402 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      .types-container {
-        display: flex;
-        border: 1px solid black;
-      }
-      .pagename-options-container {
-        border: 1px solid black;
-        display: flex;
-      }
-      .scripts-and-vars {
-        border: 1px solid black;
-        display: flex;
-        height: 20rem;
-      }
-      .variables {
-        border: 1px solid black;
-        overflow: scroll;
-      }
-      .code-snippet {
-        width: 70%;
-        overflow: scroll;
-      }
+<style>
+  .span-bold {
+    font-weight: bold;
+  }
+  input[type="checkbox"]:hover {
+    cursor: pointer;
+  }
+  .selected {
+    background: #f3f3f3;
+  }
+  .types-container {
+    max-width: 45rem;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    width: 45rem;
+  }
 
-      .website-type {
-        height: 6rem;
-        width: 6rem;
-        border: 1px solid black;
-      }
-      .website-type:hover {
-        cursor: pointer;
-      }
-      .checkbox:hover {
-        cursor: pointer;
-        cursor: pointer;
-      }
-      .page-option:hover {
-        border: 1px solid black;
-        background-color: aquamarine;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="types" class="types-container">
-      <div class="website-type" id="casino">Casino</div>
-      <div class="website-type" id="mobile">Mobile</div>
-      <div class="website-type" id="ecommerce">Ecommerce</div>
-      <div class="website-type" id="Newsletter">Newsletter</div>
-    </div>
+  .website-type {
+    height: 10rem;
+    width: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0.5px solid black;
+    border-radius: 5px;
+  }
+  .pagename-options-container {
+    display: flex;
+    width: 45rem;
+  }
 
-    <div class="pagename-options-container" id="options-container">
-      <div class="pagenames" id="pagenames" hidden></div>
-    </div>
-    <div id="error-message" hidden></div>
-    <div id="scripts" class="codes-container" hidden></div>
+  .scripts-and-vars {
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
 
-    <script>
-      window.productLevelVars = {};
-      window.orderLevelVars = {};
-      const HTMLSCRIPTS = "";
-      function insertAfter(newNode, existingNode) {
-        existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-      }
-      const websiteTypesContainer = document.getElementById("types");
-      const optionsContainer = document.getElementById("options-container");
-      const pageNamesContainer = document.getElementById("pagenames");
+    ::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px grey;
+      border-radius: 10px;
+    }
 
-      const errorMessageElement = document.getElementById("error-message");
-      const scriptsContainer = document.getElementById("scripts");
+    ::-webkit-scrollbar-thumb {
+      background: rgba(83, 167, 209, 1);
+      border-radius: 10px;
+    }
 
-      function renderDOM(trackingDomain, trackingSetupID, pageName) {
-        const scriptsDiv = document.createElement("div");
-        scriptsDiv.className = "scripts-and-vars";
-        const varsDiv = document.createElement("div");
-        varsDiv.className = "variables-" + pageName.replaceAll(" ", "");
-        varsDiv.innerHTML = `
-        Use Variables
-        <br />
-        <br />
-        <input type="checkbox" value="sales" id="sales" data-level="order" />
-        <label for="sales">Sales (number)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="orderid"
-          id="orderid"
-          data-level="order"
-        />
-        <label for="sales">Order ID</label>
-        <br />
-        <br />
-        <div class="product-variables">Product variables:</div>
-        <br />
-        <input
-          type="checkbox"
-          value="categoryname"
-          id="categoryname"
-          data-level="product"
-        />
-        <label for="categoryname">Category Name (text)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="categoryid"
-          id="categoryid"
-          data-level="product"
-        />
-        <label for="categoryid">Category ID (text)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="productname"
-          id="productname"
-          data-level="product"
-        />
-        <label for="productname">Product Name (text)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="productid"
-          id="productid"
-          data-level="product"
-        />
-        <label for="salproductides">Product ID(text)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="weight"
-          id="weight"
-          data-level="product"
-        />
-        <label for="weight">Weight (number)</label>
-        <br />
-        <input type="checkbox" value="step" id="step" data-level="product" />
-        <label for="step">Step (number)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="productcount"
-          id="productcount"
-          data-level="product"
-        />
-        <label for="productcount">Product Count (number)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="productsales"
-          id="productsales"
-          data-level="product"
-        />
-        <label for="productsales">Product Sales (number)</label>
-        <br />
-        <input
-          type="checkbox"
-          value="productcount"
-          id="productcount"
-          data-level="product"
-        />
-        <label for="productcount">Product Count (number)</label>
-        <br />
-       
-        <input
-          type="checkbox"
-          value="sv1"
-          id="sv1"
-          data-level="order"
-        />
-        <label for="sv1">sv1 (text)</label>
-        
-        <select id="data-level-sv1">
-          <option>Order</option>
-          <option>Product</option>
-          </select>
+    display: flex;
+    height: auto;
+    position: relative;
+    width: 60rem;
+  }
+  .variables- {
+    position: absolute;
+    right: 0;
+    height: 95%;
+    overflow-y: scroll;
+    width: 14rem;
+    margin-top: 6px;
+  }
+  .code-toolbar {
+    width: 46rem;
+  }
+  .input-with-question-popup-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 21px;
+    width: 100%;
+  }
+
+  .input-with-question-popup-container > select {
+    height: 2rem;
+  }
+  .input-with-question-popup-container {
+    display: flex;
+    position: relative;
+
+    height: 21px;
+  }
+  .tracking-domain-information-text {
+    margin-inline-start: 5px;
+  }
+  .question-mark-element {
+    height: 21px;
+    display: flex;
+    align-items: center;
+  }
+  .question-mark-symbol {
+    margin-inline: 6px;
+    font-size: large;
+    font-weight: bold;
+  }
+  .question-mark-element:hover .question-mark-symbol {
+    color: #798297;
+  }
+
+  .question-mark-element .question-mark-hover-text {
+    visibility: hidden;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    margin-left: 10px;
+    z-index: 1;
+    margin-left: 2rem;
+    border: 1px solid rgba(83, 167, 209, 1);
+    border-radius: 5px;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .question-mark-element:hover {
+    cursor: pointer;
+  }
+  .question-mark-element:hover span {
+    visibility: visible;
+  }
+
+  .website-type:hover {
+    cursor: pointer;
+    background: #f3f3f3;
+  }
+  .checkbox:hover {
+    cursor: pointer;
+    cursor: pointer;
+  }
+  .checkbox {
+    margin-right: 5px;
+  }
+  .page-option:hover {
+    background-color: #fbfbf8;
+    cursor: pointer;
+  }
+</style>
+<div class="container -mb-6" id="page-container">
+  <div class="row row-lg">
+    <div class="col pb-6">
+      <nav class="font-size-md mt-6">
+        <ol class="breadcrumbs">
+          <li title="Adform">
+            <a href="/hc/en-us">Homepage</a>
+          </li>
+          <li title="Release Notes">Site Tracking Blueprint</li>
+        </ol>
+      </nav>
+
+      <header class="sm:flex justify-content-between">
+        <h1 class="w-full md:mt-2">Site Tracking Blueprint</h1>
+      </header>
+      <section>
+        <p>
+          Site Tracking blueprint is a tool to quickly generate unique tracking
+          point scripts for your Site Tracking setup. Select the type of website
+          that you are going to implement tracking in. If there is no type that
+          defines your website, select
+          <span class="span-bold">Custom Website</span>. Ecommerce option also
+          includes DCO Product retargeting template.
+        </p>
+        <p>
+          <span class="span-bold">Tracking Points</span> are indicators of which
+          part of your website you are tracking. For example, if you have a
+          website
+          <a href="https://www.example.com" target="_blank">www.example.com</a>,
+          the tracking point named <span class="span-bold">Homepage</span> would
+          be implemented on
+          <a href="https://www.example.com" target="_blank">www.example.com</a>
+          and a tracking point named
+          <span class="span-bold">Product page</span> would be implemented on
+          <a href="https://www.example.com" target="_blank"
+            >www.example.com/someproductURL</a
+          >. When you implement a tracking script on a webpage (through a tag
+          manager or other means) it will fire with every page load and count
+          pageviews. You will have the corresponding
+          <span class="span-bold">Tracking points</span> stats data in Adform,
+          meaning you will know how many times your webpage was viewed/visited.
+        </p>
+
+        You will need this information:
+        <ul>
+          <li>
+            Tracking setup ID - you can find this by accessing your Adform
+            account and navigating to
+            <span class="span-bold">Advertisers & Data Providers</span> -><span
+              class="span-bold"
+            >
+              Advertisers</span
+            >
+            -><span class="span-bold">
+              Tracking ID column (for your selected advertiser).</span
+            >
+          </li>
+          <li>
+            Tracking Domain -
+            <a
+              href="https://www.adformhelp.com/hc/en-us/articles/9740579553169"
+              target="_blank"
+              >Click Here</a
+            >
+            to find about more about tracking domains
+          </li>
+          <li>Select or insert at least 1 Tracking Point name</li>
+        </ul>
+      </section>
+
+      <div id="types" class="types-container">
+        <div class="website-type" id="casino">Casino</div>
+        <div class="website-type" id="ecommerce">Ecommerce</div>
+        <div class="website-type" id="custom">Custom Website</div>
+      </div>
+
+      <div class="pagename-options-container" id="options-container">
+        <!-- Casino Pagenames   -->
+        <div class="casino-pagenames pagenames" id="pagenames" hidden>
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Homepage"
+              id="homepage"
+              class="checkbox"
+            />
+            <label for="homepage" class="checkbox">Homepage</label>
+          </div>
           <br />
-          <input
-          type="checkbox"
-          value="sv2"
-          id="sv2"
-          data-level="order"
-        />
-        <label for="sv2">sv2 (text)</label>
-        
-        <select id="data-level-sv2">
-          <option>Order</option>
-          <option>Product</option>
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Registration"
+              id="registration"
+              class="checkbox"
+            />
+            <label for="registration" class="checkbox">Registration</label>
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="First Time Deposit"
+              id="firsttimedeposit"
+              class="checkbox"
+            />
+            <label for="firsttimedeposit" class="checkbox"
+              >First Time Deposit</label
+            >
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Deposit"
+              id="deposit"
+              class="checkbox"
+            />
+            <label for="deposit" class="checkbox">Deposit</label>
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Game Page"
+              id="gamepage"
+              class="checkbox"
+            />
+            <label for="gamepage" class="checkbox">Game Page</label>
+          </div>
+          <br />
+          <div class="page-option" id="page-option-custom1">
+            <input type="checkbox" id="custom1" class="checkbox" value="" />
+            <input placeholder="Insert your TP name" />
+          </div>
+          <br />
+        </div>
+        <!-- Ecommerce Pagenames   -->
+        <div class="ecommerce-pagenames pagenames" id="pagenames" hidden>
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Homepage"
+              id="ecom-homepage"
+              class="checkbox"
+            />
+            <label for="ecom-homepage" class="checkbox">Homepage</label>
+            <input
+              type="checkbox"
+              value="dcoselection"
+              id="dcoselection"
+              class="checkbox"
+              style="margin-left: 2rem"
+            />
+            <label for="dcoselection" class="checkbox"
+              >DCO Product Retargeting template</label
+            >
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Product Page"
+              id="productpage"
+              class="checkbox"
+            />
+            <label for="productpage" class="checkbox">Product Page</label>
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Basket Page"
+              id="basketpage"
+              class="checkbox"
+            />
+            <label for="basketpage" class="checkbox">Basket Page</label>
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Check-out Page"
+              id="checkoutpage"
+              class="checkbox"
+            />
+            <label for="checkoutpage" class="checkbox">Check-out Page</label>
+          </div>
+          <br />
+          <div class="page-option">
+            <input
+              type="checkbox"
+              value="Purchase Completed"
+              id="purchasecompleted"
+              class="checkbox"
+            />
+            <label for="purchasecompleted" class="checkbox"
+              >Purchase Completed</label
+            >
+          </div>
+          <br />
+        </div>
+      </div>
+      <button id="addCustomPage" class="button button-secondary" hidden>
+        Add another Tracking Point
+      </button>
+      <br />
+      <br />
+
+      <div class="tracking-id-and-domain-block">
+        <p>Enter your tracking setup ID:</p>
+        <div class="input-with-question-popup-container">
+          <input type="number" />
+          <div class="question-mark-element">
+            <span class="question-mark-symbol span-bold">?</span>
+            <span class="question-mark-hover-text"
+              >Your tracking setup ID can be found by navigating to your Adform
+              account -&gt;
+              <span class="span-bold">Advertisers &amp; Data Providers</span>
+              -&gt;<span class="span-bold"> Advertisers</span> -&gt;<span
+                class="span-bold"
+              >
+                Tracking ID column (for your selected advertiser).</span
+              ></span
+            >
+          </div>
+        </div>
+        <br />
+        <br />
+        <div class="input-with-question-popup-container">
+          <select id="trackingdomains">
+            <option value="track.adform.net">EMEA (track.adform.net)</option>
+            <option value="a2.adform.net">Americas (a2.adform.net)</option>
+            <option value="asia.adform.net">APAC (asia.adform.net)</option>
+            <option value="adfnet.cn">China (adfnet.cn)</option>
+            <option value="server.adform.net">EMEA (server.adform.net)</option>
+            <option value="a1.adform.net">GLOBAL (a1.adform.net)</option>
           </select>
-        
-        `;
-        const pre = document.createElement("pre");
-        pre.className = "programlisting js";
-        pre.classList.add("code-snippet");
-        pre.setAttribute("data-language", "js");
-        const code = document.createElement("code");
-        const pageNameTrimmed = pageName.replaceAll(" ", "");
-        code.className = pageNameTrimmed;
+          <div class="tracking-domain-information-text">
+            <a
+              href="https://www.adformhelp.com/hc/en-us/articles/9740579553169"
+              target="_blank"
+              >Click here</a
+            >
+            for more information on tracking domains
+          </div>
+          <div
+            class="tracking-domain-information-text"
+            id="tracking-domain-changed-text"
+          >
+            Generate Scripts again to apply new Domain
+          </div>
+        </div>
+        <br />
+        <br />
+        <button class="button button-primary" disabled>
+          Generate Tracking Scripts
+        </button>
+      </div>
 
-        const variablesString = "";
-
-        code.innerHTML = `&#x3C;!-- Adform Tracking Code BEGIN --&#x3E;
-&#x3C;script type=&#x22;text/javascript&#x22;&#x3E;
-    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : [])
-    window._adftrack.push({
-        HttpHost: '${trackingDomain}',
-        pm: ${trackingSetupID},
-        divider: encodeURIComponent('|'),
-        pagename: encodeURIComponent('${pageName}')
-        });
-    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
-&#x3C;/script&#x3E;
-&#x3C;noscript&#x3E;
-    &#x3C;p style="margin:0;padding:0;border:0;">
-        &#x3C;img src="https://${trackingDomain}/Serving/TrackPoint/?pm=${trackingSetupID}&ADFPageName=${encodeURIComponent(
-          pageName
-        )}&ADFdivider=|" width="1" height="1" alt="" />
-    &#x3C;/p&#x3E;
-&#x3C;/noscript&#x3E;
-&#x3C;!-- Adform Tracking Code END --&#x3E;`;
-        let variablesContainerElements;
-        let levelVarsSelectElements;
-        let scriptNodeList = [];
-
-        scriptsContainer.innerHTML = "";
-        scriptNodeList.forEach((node) => scriptsContainer.appendChild(node));
-        scriptsContainer.hidden = false;
-        pre.appendChild(code);
-        scriptsDiv.appendChild(pre);
-        scriptsDiv.appendChild(varsDiv);
-        scriptNodeList.push(scriptsDiv);
-      }
-
-      function createPagesCheckboxList(pageNamesArray) {
-        let IDarray = [];
-        window.numOfPagesChecked = 0;
-        window.trackingIdNotEmpty = false;
-        pageNamesArray.forEach((pageName) => {
-          const pageCheckbox = document.createElement("input");
-          pageCheckbox.type = "checkbox";
-          pageCheckbox.id = pageName.split(" ").join("").toLowerCase(); //e.g. "First time deposit" html element id will be "firsttimedeposit"
-          IDarray.push(pageCheckbox.id);
-          pageCheckbox.className = "checkbox";
-          pageCheckbox.value = pageName;
-          pageCheckbox.onchange = () => {
-            pageCheckbox.checked ? numOfPagesChecked++ : numOfPagesChecked--;
-            if (trackingIdNotEmpty && numOfPagesChecked > 0)
-              generateCodesButton.disabled = false;
-            else generateCodesButton.disabled = true;
-          };
-          //Create a label for every checkbox
-          const pageLabel = document.createElement("label");
-          pageLabel.htmlFor = pageCheckbox.id;
-          pageLabel.innerText = pageName;
-          pageLabel.className = "checkbox";
-
-          //
-          const pageContainer = document.createElement("div");
-          pageContainer.className = "page-option";
-          pageContainer.appendChild(pageCheckbox);
-          pageContainer.appendChild(pageLabel);
-
-          pageNamesContainer.appendChild(pageContainer);
-          pageNamesContainer.appendChild(document.createElement("br"));
-        });
-        let custom_id_number = 0;
-
-        custom_id_number++;
-        const customCheckbox = document.createElement("input");
-        customCheckbox.type = "checkbox";
-        customCheckbox.id = "custom" + custom_id_number;
-        IDarray.push(customCheckbox.id);
-        customCheckbox.className = "checkbox";
-        customCheckbox.value = "";
-        customCheckbox.onchange = () => {
-          if (customCheckbox.checked && customCheckbox.value.length > 0)
-            numOfPagesChecked++;
-          else if (!customCheckbox.checked && customCheckbox.value.length > 0)
-            numOfPagesChecked--;
-
-          if (trackingIdNotEmpty && numOfPagesChecked > 0)
-            generateCodesButton.disabled = false;
-          else generateCodesButton.disabled = true;
-        };
-
-        const customPageNameInputField = document.createElement("input");
-        customPageNameInputField.placeholder = "Insert your page name here";
-        const pageContainerCustom = document.createElement("div");
-        pageContainerCustom.className = "page-option";
-        pageContainerCustom.id = "page-option-custom" + custom_id_number;
-        pageContainerCustom.appendChild(customCheckbox);
-        pageContainerCustom.appendChild(customPageNameInputField);
-        pageNamesContainer.appendChild(pageContainerCustom);
-        pageNamesContainer.appendChild(document.createElement("br"));
-        customPageNameInputField.onchange = () => {
-          const currentValue = customPageNameInputField.value;
-          customCheckbox.value = currentValue;
-          if (customCheckbox.checked && customCheckbox.value.length > 0)
-            numOfPagesChecked++;
-          else if (customCheckbox.checked && customCheckbox.value.length === 0)
-            numOfPagesChecked--;
-
-          if (trackingIdNotEmpty && numOfPagesChecked > 0)
-            generateCodesButton.disabled = false;
-          else generateCodesButton.disabled = true;
-        };
-
-        const addCustomPageNameButton = document.createElement("button");
-        addCustomPageNameButton.innerText = "Add another page name";
-        addCustomPageNameButton.id = "addCustomPage";
-
-        addCustomPageNameButton.addEventListener("click", () => {
-          custom_id_number++;
-          const newCustomPageContainer = pageContainerCustom.cloneNode(true);
-          const clonedCheckbox = newCustomPageContainer.childNodes[0];
-          clonedCheckbox.id = "custom" + custom_id_number;
-          IDarray.push(clonedCheckbox.id);
-          const clonedInputField = newCustomPageContainer.childNodes[1];
-          clonedCheckbox.value = "";
-          clonedCheckbox.checked = false;
-          clonedInputField.value = "";
-          clonedCheckbox.onchange = () => {
-            if (clonedCheckbox.checked && clonedCheckbox.value.length > 0)
-              numOfPagesChecked++;
-            else if (!clonedCheckbox.checked && clonedCheckbox.value.length > 0)
-              numOfPagesChecked--;
-
-            if (trackingIdNotEmpty && numOfPagesChecked > 0)
-              generateCodesButton.disabled = false;
-            else generateCodesButton.disabled = true;
-          };
-
-          clonedInputField.onchange = () => {
-            const currentValue = clonedInputField.value;
-            clonedCheckbox.value = currentValue;
-            if (clonedCheckbox.checked && clonedCheckbox.value.length > 0)
-              numOfPagesChecked++;
-            else if (
-              clonedCheckbox.checked &&
-              clonedCheckbox.value.length === 0
-            )
-              numOfPagesChecked--;
-
-            if (trackingIdNotEmpty && numOfPagesChecked > 0)
-              generateCodesButton.disabled = false;
-            else generateCodesButton.disabled = true;
-          };
-          newCustomPageContainer.id = "page-option-custom" + custom_id_number;
-          const thisButton = Array.from(pageNamesContainer.childNodes).find(
-            (element) => element.id === "addCustomPage"
-          );
-          pageNamesContainer.insertBefore(newCustomPageContainer, thisButton);
-          pageNamesContainer.insertBefore(
-            document.createElement("br"),
-            thisButton
-          );
-        });
-
-        pageNamesContainer.appendChild(addCustomPageNameButton);
-        pageNamesContainer.appendChild(document.createElement("br"));
-        pageNamesContainer.appendChild(document.createElement("br"));
-
-        const generateCodesButton = document.createElement("button");
-        generateCodesButton.disabled = true;
-        generateCodesButton.innerText = "Generate Tracking scripts";
-
-        const trackingSetupIdField = document.createElement("input");
-        trackingSetupIdField.type = "number";
-        trackingSetupIdField.placeholder = "Enter your tracking setup ID";
-        trackingSetupIdField.onchange = () => {
-          trackingIdFieldNotEmpty = trackingSetupIdField.value.length > 0;
-          trackingIdFieldNotEmpty
-            ? (window.trackingIdNotEmpty = true)
-            : (window.trackingIdNotEmpty = false);
-
-          if (trackingIdNotEmpty && numOfPagesChecked > 0)
-            generateCodesButton.disabled = false;
-          else generateCodesButton.disabled = true;
-        };
-
-        const trackingDomainDropdown = document.createElement("select");
-        trackingDomainDropdown.id = "trackingdomains";
-
-        const domainAmericas = document.createElement("option");
-        domainAmericas.value = "a2.adform.net";
-        domainAmericas.innerText = "Americas (a2.adform.net)";
-
-        const domainAPAC = document.createElement("option");
-        domainAPAC.value = "asia.adform.net";
-        domainAPAC.innerText = "APAC (asia.adform.net)";
-
-        const domainCHINA = document.createElement("option");
-        domainCHINA.value = "adfnet.cn";
-        domainCHINA.innerText = "China (adfnet.cn)";
-
-        const domainEMEA = document.createElement("option");
-        domainEMEA.value = "track.adform.net";
-        domainEMEA.innerText = "EMEA (track.adform.net)";
-
-        const domainGLOBAL = document.createElement("option");
-        domainGLOBAL.value = "a1.adform.net";
-        domainGLOBAL.innerText = "GLOBAL (a1.adform.net)";
-
-        trackingDomainDropdown.appendChild(domainEMEA);
-        trackingDomainDropdown.appendChild(domainAmericas);
-        trackingDomainDropdown.appendChild(domainAPAC);
-        trackingDomainDropdown.appendChild(domainCHINA);
-        trackingDomainDropdown.appendChild(domainGLOBAL);
-        window.trackingDomain = trackingDomainDropdown.value;
-
-        trackingDomainDropdown.onchange = () =>
-          (window.trackingDomain = trackingDomainDropdown.value);
-
-        pageNamesContainer.appendChild(trackingSetupIdField);
-        pageNamesContainer.appendChild(document.createElement("br"));
-        pageNamesContainer.appendChild(document.createElement("br"));
-        pageNamesContainer.appendChild(trackingDomainDropdown);
-        pageNamesContainer.appendChild(document.createElement("br"));
-        pageNamesContainer.appendChild(generateCodesButton);
-
-        function GenerateScripts(
-          pageNamesArray,
-          trackingSetupID,
-          trackingDomain
-        ) {
-          if (pageNamesArray.length === 0 || trackingSetupID.length === 0) {
-            errorMessageElement.innerText =
-              "Please fill out the required fields";
-            errorMessageElement.hidden = false;
-            scriptsContainer.hidden = true;
-          } else {
-            errorMessageElement.hidden = true;
-            renderDOM(pageNamesArray, trackingSetupID, trackingDomain);
-          }
-        }
-
-        generateCodesButton.addEventListener("click", () => {
-          let selectedPageNames = [];
-          IDarray.forEach((ID) => {
-            const pageName = document.getElementById(ID);
-            if (pageName.checked && pageName.value.length > 0)
-              selectedPageNames.push(pageName.value);
-          });
-          GenerateScripts(
-            selectedPageNames,
-            trackingSetupIdField.value,
-            window.trackingDomain
-          );
-        });
-      }
-
-      const casinoType = document.getElementById("casino");
-      const casinoOptions = [
-        "Homepage",
-        "Registration",
-        "First Time Deposit",
-        "Deposit",
-        "Game page"
-      ];
-
-      casinoType.addEventListener("click", () => {
-        pageNamesContainer.hidden = !pageNamesContainer.hidden;
-
-        if (pageNamesContainer.hidden) {
-          scriptsContainer.hidden = true;
-          errorMessageElement.hidden = true;
-        }
-        if (window.casinoPages === undefined) {
-          window.casinoPages = "added";
-          createPagesCheckboxList(casinoOptions);
-        }
-      });
-    </script>
-  </body>
-</html>
+      <div id="scripts" class="codes-container" hidden></div>
+    </div>
+  </div>
+</div>
+<script src="ST_Blueprint_Page_Selection_Logic.js"></script>
