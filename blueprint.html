@@ -135,7 +135,7 @@
     cursor: pointer;
   }
 </style>
-<div class="container -mb-6" id="page-container">
+<!-- <div class="container -mb-6" id="page-container">
   <div class="row row-lg">
     <div class="col pb-6">
       <nav class="font-size-md mt-6">
@@ -149,8 +149,8 @@
 
       <header class="sm:flex justify-content-between">
         <h1 class="w-full md:mt-2">Site Tracking Blueprint</h1>
-      </header>
-      <section>
+      </header> -->
+<!-- <section>
         <p>
           Site Tracking blueprint is a tool to quickly generate unique tracking
           point scripts for your Site Tracking setup. Select the type of website
@@ -203,200 +203,198 @@
           </li>
           <li>Select or insert at least 1 Tracking Point name</li>
         </ul>
-      </section>
+      </section> -->
+<ul>
+  <li>Login to your Adform account in a separate tab</li>
+  <li>
+    Navigate to <span class="span-bold">Buy-Side platform</span> ->
+    <span class="span-bold">Site Tracking</span> ->
+    <span class="span-bold">Tracking Settings</span>
+  </li>
+  <li>
+    On the right you will see a code block starting with "Tracking Code:". Copy
+    the whole code block and paste it down here:
+  </li>
+</ul>
+<textarea rows="4" cols="70" id="pastescript"></textarea>
+<div id="types" class="types-container">
+  <div class="website-type" id="casino">Casino</div>
+  <div class="website-type" id="ecommerce">Ecommerce</div>
+  <div class="website-type" id="custom">Custom Website</div>
+</div>
 
-      <div id="types" class="types-container">
-        <div class="website-type" id="casino">Casino</div>
-        <div class="website-type" id="ecommerce">Ecommerce</div>
-        <div class="website-type" id="custom">Custom Website</div>
-      </div>
-
-      <div class="pagename-options-container" id="options-container">
-        <!-- Casino Pagenames   -->
-        <div class="casino-pagenames pagenames" id="pagenames" hidden>
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Homepage"
-              id="homepage"
-              class="checkbox"
-            />
-            <label for="homepage" class="checkbox">Homepage</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Registration"
-              id="registration"
-              class="checkbox"
-            />
-            <label for="registration" class="checkbox">Registration</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="First Time Deposit"
-              id="firsttimedeposit"
-              class="checkbox"
-            />
-            <label for="firsttimedeposit" class="checkbox"
-              >First Time Deposit</label
-            >
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Deposit"
-              id="deposit"
-              class="checkbox"
-            />
-            <label for="deposit" class="checkbox">Deposit</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Game Page"
-              id="gamepage"
-              class="checkbox"
-            />
-            <label for="gamepage" class="checkbox">Game Page</label>
-          </div>
-          <br />
-          <div class="page-option" id="page-option-custom1">
-            <input type="checkbox" id="custom1" class="checkbox" value="" />
-            <input placeholder="Insert your TP name" />
-          </div>
-          <br />
-        </div>
-        <!-- Ecommerce Pagenames   -->
-        <div class="ecommerce-pagenames pagenames" id="pagenames" hidden>
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Homepage"
-              id="ecom-homepage"
-              class="checkbox"
-            />
-            <label for="ecom-homepage" class="checkbox">Homepage</label>
-            <input
-              type="checkbox"
-              value="dcoselection"
-              id="dcoselection"
-              class="checkbox"
-              style="margin-left: 2rem"
-            />
-            <label for="dcoselection" class="checkbox"
-              >DCO Product Retargeting template</label
-            >
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Product Page"
-              id="productpage"
-              class="checkbox"
-            />
-            <label for="productpage" class="checkbox">Product Page</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Basket Page"
-              id="basketpage"
-              class="checkbox"
-            />
-            <label for="basketpage" class="checkbox">Basket Page</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Check-out Page"
-              id="checkoutpage"
-              class="checkbox"
-            />
-            <label for="checkoutpage" class="checkbox">Check-out Page</label>
-          </div>
-          <br />
-          <div class="page-option">
-            <input
-              type="checkbox"
-              value="Purchase Completed"
-              id="purchasecompleted"
-              class="checkbox"
-            />
-            <label for="purchasecompleted" class="checkbox"
-              >Purchase Completed</label
-            >
-          </div>
-          <br />
-        </div>
-      </div>
-      <button id="addCustomPage" class="button button-secondary" hidden>
-        Add another Tracking Point
-      </button>
-      <br />
-      <br />
-
-      <div class="tracking-id-and-domain-block">
-        <p>Enter your tracking setup ID:</p>
-        <div class="input-with-question-popup-container">
-          <input type="number" />
-          <div class="question-mark-element">
-            <span class="question-mark-symbol span-bold">?</span>
-            <span class="question-mark-hover-text"
-              >Your tracking setup ID can be found by navigating to your Adform
-              account -&gt;
-              <span class="span-bold">Advertisers &amp; Data Providers</span>
-              -&gt;<span class="span-bold"> Advertisers</span> -&gt;<span
-                class="span-bold"
-              >
-                Tracking ID column (for your selected advertiser).</span
-              ></span
-            >
-          </div>
-        </div>
-        <br />
-        <br />
-        <div class="input-with-question-popup-container">
-          <select id="trackingdomains">
-            <option value="track.adform.net">EMEA (track.adform.net)</option>
-            <option value="a2.adform.net">Americas (a2.adform.net)</option>
-            <option value="asia.adform.net">APAC (asia.adform.net)</option>
-            <option value="adfnet.cn">China (adfnet.cn)</option>
-            <option value="server.adform.net">EMEA (server.adform.net)</option>
-            <option value="a1.adform.net">GLOBAL (a1.adform.net)</option>
-          </select>
-          <div class="tracking-domain-information-text">
-            <a
-              href="https://www.adformhelp.com/hc/en-us/articles/9740579553169"
-              target="_blank"
-              >Click here</a
-            >
-            for more information on tracking domains
-          </div>
-          <div
-            class="tracking-domain-information-text"
-            id="tracking-domain-changed-text"
-          >
-            Generate Scripts again to apply new Domain
-          </div>
-        </div>
-        <br />
-        <br />
-        <button class="button button-primary" disabled>
-          Generate Tracking Scripts
-        </button>
-      </div>
-
-      <div id="scripts" class="codes-container" hidden></div>
+<div class="pagename-options-container" id="options-container" hidden>
+  <!-- Casino Pagenames   -->
+  <div class="casino-pagenames trackingpoints" id="casinopagenames" hidden>
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Homepage"
+        id="homepage"
+        class="checkbox"
+        checked
+      />
+      <label for="homepage" class="checkbox">Homepage</label>
     </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Registration"
+        id="registration"
+        class="checkbox"
+        checked
+      />
+      <label for="registration" class="checkbox">Registration</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="First Time Deposit"
+        id="firsttimedeposit"
+        class="checkbox"
+        checked
+      />
+      <label for="firsttimedeposit" class="checkbox">First Time Deposit</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Deposit"
+        id="deposit"
+        class="checkbox"
+        checked
+      />
+      <label for="deposit" class="checkbox">Deposit</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Game Page"
+        id="gamepage"
+        class="checkbox"
+        checked
+      />
+      <label for="gamepage" class="checkbox">Game Page</label>
+    </div>
+    <br />
+    <div class="page-option" id="page-option-custom1">
+      <input type="checkbox" id="custom1" class="checkbox" value="" />
+      <input placeholder="Insert your TP name" />
+    </div>
+    <br />
+  </div>
+  <!-- Ecommerce Pagenames   -->
+  <div
+    class="ecommerce-pagenames trackingpoints"
+    id="ecommercepagenames"
+    hidden
+  >
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Homepage"
+        id="ecom-homepage"
+        class="checkbox"
+        checked
+      />
+      <label for="ecom-homepage" class="checkbox">Homepage</label>
+      <input
+        type="checkbox"
+        value="dcoselection"
+        id="dcoselection"
+        class="checkbox"
+        style="margin-left: 2rem"
+      />
+      <label for="dcoselection" class="checkbox"
+        >DCO Product Retargeting template</label
+      >
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Product Page"
+        id="productpage"
+        class="checkbox"
+        checked
+      />
+      <label for="productpage" class="checkbox">Product Page</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Basket Page"
+        id="basketpage"
+        class="checkbox"
+        checked
+      />
+      <label for="basketpage" class="checkbox">Basket Page</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Check-out Page"
+        id="checkoutpage"
+        class="checkbox"
+        checked
+      />
+      <label for="checkoutpage" class="checkbox">Check-out Page</label>
+    </div>
+    <br />
+    <div class="page-option">
+      <input
+        type="checkbox"
+        value="Purchase Completed"
+        id="purchasecompleted"
+        class="checkbox"
+        checked
+      />
+      <label for="purchasecompleted" class="checkbox">Purchase Completed</label>
+    </div>
+    <br />
+  </div>
+  <div
+    class="custom-pagenames trackingpoints"
+    id="customscriptscontainer"
+    hidden
+  >
+    <select name="customscripts" id="customscripts">
+      <option value="">Select an option</option>
+      <option value="aftertime">Time</option>
+      <option value="aftertime2">Time2</option>
+    </select>
   </div>
 </div>
+<br />
+<br />
+<div class="custom-scripts-details-container">
+  <div class="custom-script-details aftertime" hidden>
+    <label for="aftertime-seconds"
+      >Insert the number of seconds after which you want the tracking point to
+      fire</label
+    >
+    <input type="number" id="aftertime-seconds" />
+    <label for="aftertime-seconds"
+      >Insert the name of tracking point (e.g. "Quality visit 10
+      seconds")</label
+    >
+    <input type="text" id="aftertime-tpname" />
+  </div>
+  <div class="custom-script-details aftertime2" hidden>
+    <label for="aftertime-tpname"
+      >Insert the number of seconds after which you want the tracking point to
+      fire 2</label
+    >
+    <input type="number" id="aftertime-seconds2" />
+  </div>
+</div>
+
+<button class="button button-primary" hidden>Generate Tracking Scripts</button>
+
 <script src="ST_Blueprint_Page_Selection_Logic.js"></script>
