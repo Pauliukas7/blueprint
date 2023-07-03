@@ -496,6 +496,5 @@ generateCodesButton.onclick = () => {
     });
     scriptsNodeList.forEach((node) => scriptsUIContainer.appendChild(node));
   } else {
-    console.log(window.selectedTypeID);
   }
 };
