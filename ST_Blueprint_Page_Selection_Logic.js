@@ -1,19 +1,11 @@
-const stepValue = {
-  ProductPage: 1,
-  BasketPage: 2,
-  PurchaseCompleted: 3
-};
-
 window.dcoTemplateSelected = false;
 window.selectedTrackingPoints = [];
-window.productLevelVars = {};
-window.orderLevelVars = {};
 window.generatedDomain = null;
 
 let IDarray = [];
 
-window.trackingDomain = "track.adform.net";
-window.trackingID = 1721306;
+window.trackingDomain = "";
+window.trackingID = 0;
 
 const pagenames = document.getElementById("options-container");
 
@@ -25,6 +17,7 @@ const trackingPointsContainer = document.querySelectorAll(".trackingpoints");
 
 const pageCheckboxes = document.querySelectorAll('input[type="checkbox"]');
 const allWebsiteTypes = document.querySelectorAll(".website-type");
+const websiteTypesContainer = document.getElementById("types");
 
 const optionsContainer = document.getElementById("options-container");
 const scriptsContainer = document.getElementById("scripts");
@@ -32,26 +25,36 @@ const scriptsContainer = document.getElementById("scripts");
 const casinoPageNamesList = document.querySelector(".casino-pagenames");
 const ecommercePageNamesList = document.querySelector(".ecommerce-pagenames");
 pageCheckboxes.forEach((checkbox) => {
-  if (checkbox.checked) selectedTrackingPoints.push(checkbox.value);
+  if (checkbox.checked) window.selectedTrackingPoints.push(checkbox.value);
 });
+const dcoTemplateCheckbox = document.getElementById("dcoselection");
 function showPagenamesCheckboxList(id) {
   if (id != "custom") {
+    if (id == "casino") {
+      if (dcoTemplateCheckbox.checked) {
+        dcoTemplateCheckbox.checked = false;
+        dcoTemplateCheckbox.dispatchEvent(new Event("change"));
+      }
+    }
     const currentPageOptions = document.getElementById(id + "pagenames");
     const currentPageSelectedTrackingPoints =
       currentPageOptions.querySelectorAll('input[type="checkbox"]');
     let selectedTrackingPoints = [];
 
     currentPageSelectedTrackingPoints.forEach((trackingPoint) => {
-      if (trackingPoint.checked)
+      if (trackingPoint.checked && trackingPoint.id != "dcoselection")
         selectedTrackingPoints.push(trackingPoint.value);
     });
     window.selectedTrackingPoints = selectedTrackingPoints;
+
     if (
       window.selectedTrackingPoints.length > 0 ||
-      (id == "ecommerce" && window.dcoTemplateSelected)
+      window.dcoTemplateSelected
     ) {
       generateCodesButton.disabled = false;
-    } else generateCodesButton.disabled = true;
+    } else {
+      generateCodesButton.disabled = true;
+    }
   } else {
     window.selectedTrackingPoints = [];
   }
@@ -105,7 +108,6 @@ for (const pageCheckbox of pageCheckboxes) {
   }
 }
 
-const dcoTemplateCheckbox = document.getElementById("dcoselection");
 dcoTemplateCheckbox.onchange = () => {
   window.dcoTemplateSelected = dcoTemplateCheckbox.checked;
   const ecommercePageNamesContainer =
@@ -140,24 +142,33 @@ allWebsiteTypes.forEach((type) => {
 //   showPagenamesCheckboxList(e.target.id);
 
 const textarea = document.getElementById("pastescript");
+const messageElement = document.getElementById("textarea-message");
 textarea.oninput = (e) => {
   let pastedValue = e.target.value;
   setTimeout(() => {
     if (pastedValue.match(/pm:\s*([0-9]+)/i)) {
       const trackingID = pastedValue.match(/pm:\s*([0-9]+)/i)[1];
-      const trackingDomain = pastedValue.split("HttpHost:")[1].split(",")[0];
+      const trackingDomain = pastedValue
+        .split("HttpHost:")[1]
+        .split(",")[0]
+        .replaceAll("'", "");
+      console.log(trackingDomain);
       window.trackingID = trackingID;
       window.trackingDomain = trackingDomain.trim();
-      console.log("Tracking ID:", trackingID);
-      console.log("Tracking Domain: ", trackingDomain.trim());
-      e.target.value = "";
+      messageElement.innerHTML = `Tracking Setup Id <span class="tracking-values">${trackingID}</span> and Tracking Domain <span class="tracking-values">'${trackingDomain}'</span> successfully captured`;
+      messageElement.classList.remove("error-message");
+      messageElement.classList.add("success-message");
+      textarea.parentNode.replaceChild(messageElement, textarea);
+      websiteTypesContainer.hidden = false;
     } else {
-      console.log("not");
+      messageElement.innerText = `Did not capture values. Make sure to copy a big portion of the code in the platform.`;
+      var textareaContainer = document.getElementById("pastescript").parentNode;
+      textareaContainer.appendChild(messageElement);
       e.target.value = "";
     }
   }, 500);
 };
-let selectedValue = "";
+let customScriptsSelectedScript = "";
 const customScriptSelection = document.getElementById("customscripts");
 
 const customScriptsDetailsContainer = document.querySelector(
@@ -165,22 +176,32 @@ const customScriptsDetailsContainer = document.querySelector(
 );
 
 customScriptSelection.onchange = (e) => {
-  selectedValue = e.target.value;
-  if (selectedValue !== "") {
+  customScriptsSelectedScript = e.target.value;
+  if (customScriptsSelectedScript !== "") {
     customScriptsDetailsContainer
       .querySelectorAll(".custom-script-details")
       .forEach((template) => {
-        if (Array.from(template.classList).includes(selectedValue))
+        if (
+          Array.from(template.classList).includes(customScriptsSelectedScript)
+        )
           template.hidden = false;
         else template.hidden = true;
       });
   }
 };
+const scriptsUIContainer = document.getElementById("scripts");
 
-generateCodesButton.onclick = () => {
+const customTpNameInputs = document.querySelectorAll(".custom-name");
+customTpNameInputs.forEach((input) => {
+  input.onchange = () =>
+    (document.querySelector("." + input.id).value = input.value);
+});
+
+const downloadButtons = "";
+downloadButtons.onclick = () => {
   if (window.selectedTypeID == "custom") {
-    if (selectedValue != "") {
-      if (selectedValue == "aftertime") {
+    if (customScriptsSelectedScript != "") {
+      if (customScriptsSelectedScript == "aftertime") {
         const seconds = document.getElementById("aftertime-seconds").value;
         const pagename = document.getElementById("aftertime-tpname").value;
 

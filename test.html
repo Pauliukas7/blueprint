@@ -22,61 +22,16 @@
       >LOLOL</a
     >
     <textarea rows="4" cols="50" id="pastescript"></textarea>
-
+    <button id="sendemail">Send via-mail</button>
     <script>
-      const textarea = document.getElementById("pastescript");
-      textarea.oninput = (e) => {
-        let pastedValue = e.target.value;
-        setTimeout(() => {
-          if (pastedValue.includes("pm:") && pastedValue.includes("HttpHost")) {
-            const trackingID = pastedValue.match(/pm:\s*([0-9]+)/i)[1];
+      fetch("https://api.adform.com/v1/buyer/campaigns")
+        .then((res) => res.json())
+        .then((data) => console.log(data));
 
-            const trackingDomain = pastedValue
-              .split("HttpHost:")[1]
-              .split(",")[0];
-            console.log("Tracking ID:", trackingID);
-            console.log("Tracking Domain: ", trackingDomain.trim());
-            e.target.value = "";
-          } else {
-            console.log("not");
-            e.target.value = "";
-          }
-        }, 500);
-      };
+      document.getElementById("sendemail").onclick = () =>
+        window.open(
+          "mailto:test@example.com?subject=subject&body=scriptukas ce karoce"
+        );
     </script>
-    <p style="margin: 0; padding: 0; border: 0">
-      <img
-        src="https://track.adform.net/Serving/TrackPoint/?pm=1721306&ADFPageName=First Time Deposit&ADFdivider=|"
-        width="1"
-        height="1"
-        alt=""
-      />
-    </p>
-    <!-- Adform Tracking Code BEGIN -->
-    <script type="text/javascript">
-      setTimeout(() => {
-        window._adftrack = Array.isArray(window._adftrack)
-          ? window._adftrack
-          : window._adftrack
-          ? [window._adftrack]
-          : [];
-        window._adftrack.push({
-          HttpHost: "track.adform.net",
-          pm: 1721306,
-          divider: encodeURIComponent("|"),
-          pagename: encodeURIComponent("3 secs")
-        });
-        (function () {
-          var s = document.createElement("script");
-          s.type = "text/javascript";
-          s.async = true;
-          s.src =
-            "https://s2.adform.net/banners/scripts/st/trackpoint-async.js";
-          var x = document.getElementsByTagName("script")[0];
-          x.parentNode.insertBefore(s, x);
-        })();
-      }, 3 * 1000);
-    </script>
-    <!-- Adform Tracking Code END -->
   </body>
 </html>
