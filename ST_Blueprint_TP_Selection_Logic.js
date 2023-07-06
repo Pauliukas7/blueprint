@@ -119,9 +119,14 @@ dcoTemplateCheckbox.onchange = () => {
       option.childNodes[1].disabled = true;
     });
   } else {
+    window.selectedTrackingPoints = [];
     ecommerceTrackingPoints.forEach(
       (option) => (option.childNodes[1].disabled = false)
     );
+    ecommerceTrackingPoints.forEach((option) => {
+      if (option.childNodes[1].checked)
+        window.selectedTrackingPoints.push(option.childNodes[1].value);
+    });
   }
 
   if (window.selectedTrackingPoints.length > 0 || window.dcoTemplateSelected) {
@@ -140,9 +145,45 @@ allWebsiteTypes.forEach((type) => {
 //   showPagenamesCheckboxList(e.target.id);
 // ecommerceTypeSelectionElement.onclick = (e) =>
 //   showPagenamesCheckboxList(e.target.id);
-
-const textarea = document.getElementById("pastescript");
+const saveValuesButton = document.getElementById("savevalues");
+const clearValuesButton = document.getElementById("clearvalues");
+const valuesInfoMessage = document.getElementById("valuesinfo-message");
 const messageElement = document.getElementById("textarea-message");
+const provideInformationBlock = document.getElementById("provideinformation");
+const textarea = document.getElementById("pastescript");
+
+saveValuesButton.onclick = () => {
+  localStorage.setItem("adfTrackingId", window.trackingID);
+  localStorage.setItem("adfTrackingDomain", window.trackingDomain);
+  saveValuesButton.hidden = true;
+  valuesInfoMessage.innerText = "Values saved";
+  clearValuesButton.hidden = false;
+};
+clearValuesButton.onclick = () => {
+  localStorage.removeItem("adfTrackingId");
+  localStorage.removeItem("adfTrackingDomain");
+  clearValuesButton.hidden = true;
+  messageElement.innerText = "";
+  valuesInfoMessage.innerText = "";
+  provideInformationBlock.hidden = false;
+  websiteTypesContainer.hidden = true;
+  textarea.value = "";
+};
+
+const existingTrackingId = localStorage.getItem("adfTrackingId");
+const existingTrackingDomain = localStorage.getItem("adfTrackingDomain");
+
+if (existingTrackingId && existingTrackingDomain) {
+  window.trackingID = existingTrackingId;
+  window.trackingDomain = existingTrackingDomain;
+}
+if (window.trackingID && window.trackingDomain) {
+  messageElement.innerHTML = `Tracking Setup Id <span class="tracking-values">${window.trackingID}</span> and Tracking Domain <span class="tracking-values">'${window.trackingDomain}'</span> successfully captured`;
+  provideInformationBlock.hidden = true;
+  clearValuesButton.hidden = false;
+  websiteTypesContainer.hidden = false;
+}
+
 textarea.oninput = (e) => {
   let pastedValue = e.target.value;
   setTimeout(() => {
@@ -156,14 +197,11 @@ textarea.oninput = (e) => {
       window.trackingID = trackingID;
       window.trackingDomain = trackingDomain.trim();
       messageElement.innerHTML = `Tracking Setup Id <span class="tracking-values">${trackingID}</span> and Tracking Domain <span class="tracking-values">'${trackingDomain}'</span> successfully captured`;
-      messageElement.classList.remove("error-message");
-      messageElement.classList.add("success-message");
-      textarea.parentNode.replaceChild(messageElement, textarea);
+      provideInformationBlock.hidden = true;
+      saveValuesButton.hidden = false;
       websiteTypesContainer.hidden = false;
     } else {
       messageElement.innerText = `Did not capture values. Make sure to copy a big portion of the code in the platform.`;
-      var textareaContainer = document.getElementById("pastescript").parentNode;
-      textareaContainer.appendChild(messageElement);
       e.target.value = "";
     }
   }, 500);

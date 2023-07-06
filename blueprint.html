@@ -146,11 +146,7 @@
 
     /* height: 3rem; */
   }
-  .success-message {
-    /* animation: fadeOut 5s forwards; */
-  }
-  .error-message {
-  }
+
   .tracking-values {
     color: green;
   }
@@ -248,10 +244,26 @@
     the whole code block and paste it down here:
   </li>
 </ul>
-<div>
+<div id="textarea-message"></div>
+<div id="valuesinfo-message"></div>
+<button id="savevalues" hidden>Save Values</button>
+<button id="clearvalues" hidden>Clear Values</button>
+<div id="provideinformation">
   <textarea rows="4" cols="70" id="pastescript"></textarea>
-
-  <div id="textarea-message"></div>
+  <div>OR</div>
+  <div>
+    <input type="text" id="trackingsetupid" />
+    <label for="trackingsetupid">Enter your tracking setup ID</label>
+  </div>
+  <select name="trackingdomain" id="trackingdomain">
+    <option value="a1.adform.net">Americas (a2.adform.net)</option>
+    <option value="asia.adform.net">APAC (asia.adform.net)</option>
+    <div>
+      <option value="track.adform.net">EMEA (track.adform.net)</option>
+      <option value="a1.adform.net">Global (a1.adform.net)</option>
+    </div>
+  </select>
+  <label for="trackingdomain">Select your tracking domain</label>
 </div>
 
 <div id="types" class="types-container" hidden>
@@ -456,6 +468,6 @@
 <!-- <script src="{{asset 'ST_Blueprint_Page_Selection_Logic.js'}}"></script>
 <script src="{{asset 'ST_Blueprint_SiteTrackingScripts.js'}}"></script> -->
 
-<script src="ST_Blueprint_Page_Selection_Logic.js"></script>
+<script src="ST_Blueprint_TP_Selection_Logic.js"></script>
 <script src="ST_Blueprint_SiteTrackingScripts.js"></script>
 <!-- <script src="ST_Blueprint_RenderDOM.js"></script> -->
