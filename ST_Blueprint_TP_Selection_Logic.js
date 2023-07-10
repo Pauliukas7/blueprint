@@ -227,7 +227,6 @@ customScriptSelection.onchange = (e) => {
       });
   }
 };
-const scriptsUIContainer = document.getElementById("scripts");
 
 const customTpNameInputs = document.querySelectorAll(".custom-name");
 customTpNameInputs.forEach((input) => {
